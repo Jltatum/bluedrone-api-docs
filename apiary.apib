@@ -1,0 +1,1250 @@
+FORMAT: 1A
+HOST: http://www.bluedrone.com
+
+
+# Bluedrone API
+
+This Hypermedia API is currently a **work in progress**
+
+## Validation
+
+The API uses [JSON Schema](http://json-schema.org/) to validate requests and enforce the object contraints. 
+Each API method that has a request payload contains a Schema.
+The same Schema is being used by our server to validate your request.
+It can help you better understand some validation errors,
+or you can decide to use it to validate your requests before sending them.
+
+# Group API Root
+
+## Root [/]
+
+Main Bluedrone API entry point.
+
+This resource does not have any attributes. 
+Instead it offers the initial API affordances in the form of the HTTP Link header and HAL links.
+
+### Retrieve the Entry Point [GET]
+
++ Response 200 (application/hal+json)
+    + Headers
+    
+            Link: <http:/api.bluedrone.com/>;rel="self",<http:/api.bluedrone.com/auth/token>;rel="auth",<http:/api.bluedrone.com/channels>;rel="channels",<http:/api.bluedrone.com/products>;rel="products"
+
+    + Body
+
+            {
+                "_links": {
+                    "self": { "href": "/" },
+                    "auth": { "href": "/oauth/token" },
+                    "channels": { "href": "/channels{?offset,limit}", "templated": true },
+                    "products": { "href": "/products{?sales_channel_id,offset,limit}", "templated": true }
+                }
+            }
+
+# Group Authentication
+
+The Bluedrone API can use the OAuth 2.0 protocol for authentication and authorization. 
+The only supported flow is **client credentials**. 
+
+Each request to the Bluedrone API (except when obtaining the token) needs to be 
+accompanied by an access token. The token can be sent in two ways:
+
+ * Either as an URL parameter `access_token=03807cb390319329bdf6c777d4dfae9c0d3b3c35`
+ * Or as a header `Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35`
+ 
+
+**Make sure you always send requests over HTTPS and never ignore invalid certificates. 
+HTTPS is the only thing protecting requests from being intercepted or modified.**
+
+## Access token [/oauth2/token]
+
+Once obtained, an access token needs to be stored by your application and used for 
+all subsequent requests. Tokens expire after 30 minutes at which point you will need to obtain a new one.
+A refresh token which is present in other OAuth 2 flows is not included in this flow.
+
+### Obtain the access token [POST]
+
+The token request should be sent in an HTTP POST to the token endpoint with the following parameters:
+
+| Parameter | Description |
+| --- | --- |
+| `grant_type` | Must be set to **client_credentials**. |
+| `client_id` | This represents the API key that can be obtained from the Bluedrone interface. |
+| `client_secret` | It represents the API secret that comes together with the key. |
+
+The `client_id` and the `client_secret` parameters can be sent as they are as part of the request body 
+or in a base64 encoding as a header `Authorization: Basic Base64(client_id:client_secret)`. 
+
+An access token is sent back to the client on success.
+
++ Request Client id and secret in POST body (application/x-www-form-urlencoded)
+    
+    + Body
+
+            grant_type=client_credentials&client_id=CLIENT_ID&client_secret=CLIENT_SECRET
+
++ Request Client id and secret as header (application/x-www-form-urlencoded)
+
+    + Headers
+        
+            Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+    
+    + Body
+    
+            grant_type=client_credentials
+
++ Response 200 (application/json)
+
+    + Body
+        
+            {
+                "access_token": "03807cb390319329bdf6c777d4dfae9c0d3b3c35",
+                "token_type": "Bearer",
+                "expires_in": 1800
+            }
+
+# Group Sales Channels
+
+_Sales Channels_ are essential for most of the API operations.
+For example, you can only work with Orders through a Sales Channel.
+This means that before starting to use this API it is imperative that you
+create a Sales Channel using the Bluedrone administration panel,
+preferably of type "API".
+
+_Sales Channel_ objects can be returned as part of a collection or individually. 
+In both cases, the _Sales Channel_ objects have the following properties:
+
+| Property | Description | Type |
+| --- | --- | --- |
+| `id` | The Bluedrone internal ID associated to this Sales Channel. | integer |
+| `name` | The user friendly name of the Sales Channel. | string |
+| `type` | The data source type for this channel. At the time of this writing, it can have one of the values: "api", "shopify", "amazon". More possible values will be added in the future. | string |
+| `status` | Can have one of the values: "active", "inactive" | string |
+
+## Sales Channels Collection [/channels{?offset,limit}]
+
+### List Sales Channels [GET]
+
++ Parameters
+    + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
+    + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+            
++ Response 200 (application/hal+json)
+
+    + Body
+    
+            {
+                "_links": {
+                    "self": {
+                        "href": "/channels?offset=2&limit=2"
+                    },
+                    "first": {
+                        "href": "/channels?limit=2"
+                    },
+                    "prev": {
+                        "href": "/channels?offset=0&limit=2"
+                    },
+                    "next": {
+                        "href": "/channels?offset=4&limit=2"
+                    },
+                    "last": {
+                        "href": "/channels?offset=4&limit=2"
+                    }
+                },
+                "_embedded": {
+                    "sales_channels": [
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/channels/23"
+                                },
+                                "orders": {
+                                    "href": "/channels/23/orders"
+                                }
+                            },
+                            "id": 23,
+                            "name": "dirtypants.com",
+                            "type": "api",
+                            "status": "active"
+                        },
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/channels/24"
+                                },
+                                "orders": {
+                                    "href": "/channels/24/orders"
+                                }
+                            },
+                            "id": 24,
+                            "name": "dirtypants.shopify.com",
+                            "type": "shopify",
+                            "status": "active"
+                        }
+                    ]
+                },
+                "total": 6,
+                "count": 2,
+                "limit": 2,
+                "offset": 2
+            }
+
+## Sales Channel [/channels/{id}]
+
++ Parameters
+    + id (required, number, `23`) ... The Bluedrone Sales Channel id.
+
+### Retrieve a Sales Channel [GET]
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+            
++ Response 200 (application/hal+json)
+
+    + Body
+    
+            {
+                "_links": {
+                    "self": {
+                        "href": "/channels/23"
+                    },
+                    "orders": {
+                        "href": "/channels/23/orders"
+                    }
+                },
+                "id": 23,
+                "name": "dirtypants.com",
+                "type": "api",
+                "status": "active"
+            }
+
+# Group Products
+
+_Product_ objects can be returned as part of a collection or individually. 
+In both cases, the _Product_ objects have the following properties:
+
+| Property | Description | Type |
+| --- | --- | --- |
+| `id` | The Bluedrone internal ID associated to this Product. | integer |
+| `sku` | The user SKU of the Product. | string |
+| `name` | The user friendly name of the Product. | string |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string |
+| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
+| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
+| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
+| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
+| `price` | The estimated Product price in the currency of choice. | decimal |
+| `currency_code` | The ISO-4217 currency code for the price. | string |
+| `is_fragile` | Tells if a Product is fragile. | boolean | 
+| `is_dangerous` | Tells if a Product is dangerous. | boolean |
+| `is_perishable` | Tells if a Product is perishable. | boolean |
+| `is_compound` | Tells if a Product is composed of other Products. | boolean |
+
+
+## Products Collection [/products{?sales_channel_id,offset,limit}]
+
+This link relationship returns a collection of resources. 
+You can easily paginate through this collection using the hypermedia 
+links provided and the link relationships of first, prev, next, and last.
+
+### List Products [GET]
+
+Beside the Hypermedia links present in all responses, the collection has the following properties.
+
+| Property | Description |
+| --- | --- |
+| `count` | The number of Products returned. |
+| `total` | The total number of Products. |
+| `limit` | The currently used `limit` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
+| `offset` | The currently used `offset` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
+
+As you may see in the sample response attached to this operation,
+there is an `_embedded` property. This conform to the HAL specification and in turn contains 
+the actual array of _Product_ objects whose properties have been described at the beginning of this section.
+
+
++ Parameters
+    + sales_channel_id (optional, number, `1`) ... Allows filtering by Sales Channel.
+    + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
+    + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
+    
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 200 (application/hal+json)
+
+    + Body
+    
+            {
+                "_links": {
+                    "self": {
+                        "href": "/products?offset=2&limit=2"
+                    },
+                    "first": {
+                        "href": "/products?limit=2"
+                    },
+                    "prev": {
+                        "href": "/products?offset=0&limit=2"
+                    },
+                    "next": {
+                        "href": "/products?offset=4&limit=2"
+                    },
+                    "last": {
+                        "href": "/products?offset=4&limit=2"
+                    }
+                },
+                "_embedded": {
+                    "products": [
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/products/12345-09-M-XL-WHT"
+                                }
+                            },
+                            "id": 23,
+                            "sku": "12345-09-M-XL-WHT",
+                            "name": "Japanese Kimono Men's Large White",
+                            "unit_system": "imperial",
+                            "weight": 100,
+                            "length": 10,
+                            "width": 10,
+                            "height": 5,
+                            "price": 7.5,
+                            "currency_code": "USD",
+                            "is_fragile": false,
+                            "is_dangerous": false,
+                            "is_perishable": false,
+                            "is_compound": false
+                        } ,
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/products/2345-09-F-RED"
+                                }
+                            },
+                            "id": 25,
+                            "sku": "2345-09-F-RED",
+                            "name": "Gheisa Hair Pin Red",
+                            "unit_system": "imperial",
+                            "weight": 10,
+                            "length": 4,
+                            "width": 1,
+                            "height": 1,
+                            "price": 3.5,
+                            "currency_code": "USD",
+                            "is_fragile": true,
+                            "is_dangerous": false,
+                            "is_perishable": false,
+                            "is_compound": false
+                        }
+                    ]
+                },
+                "total": 6,
+                "count": 2,
+                "limit": 2,
+                "offset": 2
+            }
+    
+## Product [/products/{sku}]
+
+A single Product with all it's details. A Product is always referred to by using the SKU.
+
++ Parameters
+    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
+
++ Model (application/hal+json)
+    
+    HAL+JSON representation of the Product Resource. 
+    In addition to representing its state in the JSON form it offers affordances 
+    in the form of the HTTP Link header and HAL links.
+
+    + Headers
+
+            Link: <http:/api.bluedrone.com/products/2345-09-F-RED>;rel="self"
+
+    + Body
+
+            {
+                "_links": {
+                    "self": {
+                        "href": "/products/2345-09-F-RED"
+                    }
+                },
+                "id": 23,
+                "sku": '2345-09-F-RED',
+                "name": "Gheisa Hair Pin Red",
+                "unit_system": "imperial",
+                "weight": 10,
+                "length": 4,
+                "width": 1,
+                "height": 1,
+                "price": 3.5,
+                "currency_code": "USD",
+                "is_fragile": true,
+                "is_dangerous": false,
+                "is_perishable": false,
+                "is_compound": false
+            }
+
+### Create or update a Product [PUT]
+
+The object sent in the request body has slightly different properties than the _Product_ 
+object that is retrieved on GET requests (as part of a collection or individually).
+The properties and the contraints are described below.
+
+| Property | Description | Type | Constraints |
+| --- | --- | --- | --- |
+| `sales_channel_id` | The id of the Sales Channel obtained from the Bluedrone interace. | integer | Required. |
+| `name` | The user friendly name of the Product. | string | Required. 100 chars or less. |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string | Required. metric or imperial. |
+| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Required. |
+| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `price` | The estimated Product price in the currency of choice. | decimal | Required. |
+| `currency_code` | The 3 letter currency code for the price. | string | Required. ISO-4217 format. | 
+| `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Required. true or false. |
+| `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Required. true or false. |
+| `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Required. true or false. |
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+    
+    + Body
+    
+            {
+                "sales_channel_id": 23,
+                "name": "Gheisa Hair Pin Red",
+                "unit_system": "imperial",
+                "weight": 10,
+                "length": 4,
+                "width": 1,
+                "height": 1,
+                "price": 3.5,
+                "currency_code": "USD",
+                "is_fragile": true,
+                "is_dangerous": false,
+                "is_perishable": false
+            }
+
+    + Schema
+    
+            
+            {
+                "$schema": "http://json-schema.org/schema#",
+                "definitions": {
+                    "currency_code": {
+                        "enum": ["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BWP", "BYR", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "GBP", "GEL", "GHS", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KHR", "KMF", "KRW", "KWD", "KZT", "LBP", "LKR", "LRD", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MOP", "MUR", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SDG", "SEK", "SGD", "SOS", "STD", "SYP", "THB", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VEF", "VND", "XAF", "XOF", "YER", "ZAR", "ZMK"]
+                    }
+                },
+                "title": "Product",
+                "type": "object",
+                "properties": {
+                    "sales_channel_id": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1
+                    },
+                    "unit_system": {
+                        "enum": ["metric", "imperial"]
+                    },
+                    "weight": {
+                        "type": "number"
+                    },
+                    "length": {
+                        "type": "number"
+                    },
+                    "width": {
+                        "type": "number"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "currency_code": {
+                        "$ref": "#/definitions/currency_code"
+                    },
+                    "is_fragile": {
+                        "type": "boolean"
+                    },
+                    "is_dangerous": {
+                        "type": "boolean"
+                    },
+                    "is_perishable": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["sales_channel_id", "name", "unit_system", "weight", "length", "width", "height", "price", "currency_code", "is_fragile", "is_dangerous", "is_perishable"]
+            }
+            
++ Response 201 (application/hal+json)
+
+    [Product][]
+
+### Retrieve a Product [GET]
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 200 (application/hal+json)
+
+    [Product][]
+
+### Remove a Product [DELETE]
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 204
+
+# Group Orders
+
+_Order_ objects can be returned as part of a collection or individually. 
+In both cases, the _Order_ objects have the following properties:
+
+| Property | Description | Type |
+| --- | --- | --- |
+| `id` | The Bluedrone internal ID associated to this Product. | integer |
+| `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
+| `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
+| `order_date` | The date&time at which the order was created in your platform. | string |
+| `paid_date` | The date&time at which the order was paid in your platform. | string |
+| `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
+| `bill_to_name` | The billing name. | sting |
+| `bill_to_country` | The billing country. | string 
+| `bill_to_state` | The billing state. For US states, it will be the full state name. | string |
+| `bill_to_city` | The billing city. | string |
+| `bill_to_zip` | The billing zip/postal code. | string |
+| `bill_to_address1` | The billing address. | string |
+| `bill_to_address2` | Additional field for the billing address. | string |
+| `bill_to_email` | The billing email address. | string |
+| `bill_to_phone` | The billing phone number. | string |
+| `bill_to_fax` | The billing fax number. | string |
+| `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
+| `ship_to_name` | The shipping name. | sting |
+| `ship_to_country` | The shipping country. | string |
+| `ship_to_state` | The shipping state. For US states, it will be the full state name. | string |
+| `ship_to_city` | The shipping city. | string | 
+| `ship_to_zip` | The shipping zip/postal code. | string |
+| `ship_to_address1` | The shipping address. | string |
+| `ship_to_address2` | Additional field for the shipping address. | string |
+| `ship_to_email` | The shipping email address. | string |
+| `ship_to_phone` | The shipping phone number. | string |
+| `ship_to_fax` | The shipping fax number. | string |
+| `notes_from_customer` | These notes can be any customer instructions whether about packing or delivery. | string |
+| `notes_to_customer` | These notes will be included in the packing slip. | string |
+| `product_subtotal` | The cumulated price of all Products in the Order. | decimal |
+| `shipping` | The shipping cost presented to the customer. Will be included in the packing slip. | decimal |
+| `discount` | The discount amount presented to the customer. Will be included in the packing slip. | decimal |
+| `tax` | The tax amount presented to the customer. Wil be included in the packing slip. | decimal |
+| `order_total` | The total order price that includes the shipping costs, discounts or taxes. | decimal |
+| `currency_code` | The 3 letter currency code that prices are expressed in. | string |
+| `status` | Can have one of the values: "awaiting_activation", "active", "in_process", "shipped", "cancelled", "on_hold" | string |
+| `_embedded` | An object with a single property named `order_lines` | object |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`order_lines` | An array of _OrderLine_ objects | array |
+
+_OrderLine_ objects are very similar to the _Product_ objects, 
+the only difference being a few more properties:
+
+| Property | Description | Type |
+| --- | --- | --- |
+| `id` | The Bluedrone internal ID associated to this OrderLine. | integer |
+| `product_id` | The Bluedrone internal ID associated to the Product that is contained in this OrderLine. | integer |
+| `sku` | The user SKU of the Product. | string |
+| `quantity` | The number of units for the Product. | integer |
+| `name` | The user friendly name of the Product. | string |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
+| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
+| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
+| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
+| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
+| `price` | The estimated Product price in the currency of choice. | decimal |
+| `currency_code` | The ISO-4217 currency code for the price. | string |
+| `is_fragile` | Tells if the associated Product is fragile. | boolean | 
+| `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
+| `is_perishable` | Tells if the associated Product is perishable. | boolean |
+| `is_compound` | Tells if the associated Product is composed of other Products. | boolean |
+
+## Orders Collection [/channels/{sales_channel_id}/orders{?offset,limit}]
+
+This link relationship returns a collection of Orders. 
+You can easily paginate through this collection using the hypermedia 
+links provided and the link relationships of first, prev, next, and last.
+
+### List Orders [GET]
+
+Beside the Hypermedia links present in all responses, the collection has the following properties.
+
+| Collection Property | Description |
+| --- | --- |
+| `count` | The number of Orders returned. |
+| `total` | The total number of Orders. |
+| `limit` | The currently used `limit` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
+| `offset` | The currently used `offset` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
+
+As you may see in the sample response attached to this operation,
+there is an `_embedded` property. This conform to the HAL specification and in turn contains 
+the actual array of _Order_ objects whose properties have been described at the beginning of this section.
+
+
++ Parameters
+    + sales_channel_id (required, number, `1`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
+    + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
+    
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 200 (application/hal+json)
+
+    + Body
+    
+            {
+                "_links": {
+                    "self": {
+                        "href": "/channels/23/orders?offset=2&limit=2"
+                    },
+                    "first": {
+                        "href": "/channels/23/orders?limit=2"
+                    },
+                    "prev": {
+                        "href": "/channels/23/orders?limit=2"
+                    },
+                    "next": {
+                        "href": "/channels/23/orders?offset=4&limit=2"
+                    },
+                    "last": {
+                        "href": "/channels/23/orders?offset=4&limit=2"
+                    }
+                },
+                "_embedded": {
+                    "orders": [
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/channels/23/orders/789"
+                                },
+                                "channel": {
+                                    "href": "/channels/23"
+                                }
+                            },
+                            "id": 567,
+                            "external_order_id": "789",
+                            "sales_channel_id": 23,
+                            "order_date": "2014-06-19T19:12:32Z",
+                            "paid_date": "",
+                            "bill_to_is_company": false,
+                            "bill_to_name": "",
+                            "bill_to_country": "",
+                            "bill_to_state": "",
+                            "bill_to_city": "",
+                            "bill_to_zip": "",
+                            "bill_to_address1": "",
+                            "bill_to_address2": "",
+                            "bill_to_email": "",
+                            "bill_to_phone": "",
+                            "bill_to_fax": "",
+                            "ship_to_is_company": false,
+                            "ship_to_name": "John Green",
+                            "ship_to_country": "US",
+                            "ship_to_state": "MN",
+                            "ship_to_city": "St. Louis Park",
+                            "ship_to_zip": "55416",
+                            "ship_to_address1": "3540 Dakota Ave. S.",
+                            "ship_to_address2": "",
+                            "ship_to_email": "john@bluedrone.com",
+                            "ship_to_phone": "1-800-594-4730 ",
+                            "ship_to_fax": "",
+                            "notes_from_customer": "Please deliver after 4 PM.",
+                            "notes_to_customer": "The package is wrapped in additional material in order to protect it from damage.",
+                            "product_subtotal": 18.5,
+                            "shipping": 5,
+                            "discount": 3,
+                            "tax": "",
+                            "order_total": 25.5,
+                            "currency_code": "USD",
+                            "status": "active",
+                            "_embedded": {
+                                "order_lines": [
+                                    {
+                                        "_links": {
+                                            "self": {
+                                                "href": "/products/2345-09-F-RED"
+                                            }
+                                        },
+                                        "id": 7898
+                                        "product_id": 25,
+                                        "sku": '2345-09-F-RED',
+                                        "quantity": 1,
+                                        "name": "Gheisa Hair Pin Red",
+                                        "unit_system": "imperial",
+                                        "weight": 10,
+                                        "length": 4,
+                                        "width": 1,
+                                        "height": 1,
+                                        "price": 5,
+                                        "currency_code": "USD",
+                                        "is_fragile": true,
+                                        "is_dangerous": false,
+                                        "is_perishable": false,
+                                        "is_compound": false
+                                    },
+                                    {
+                                        "_links": {
+                                            "self": {
+                                                "href": "/products/12345-09-M-XL-WHT"
+                                            }
+                                        },
+                                        "id": 7899,
+                                        "product_id": 23,
+                                        "sku": "12345-09-M-XL-WHT",
+                                        "quantity": 2,
+                                        "name": "Japanese Kimono Men's Large White",
+                                        "unit_system": "imperial",
+                                        "weight": 100,
+                                        "length": 10,
+                                        "width": 10,
+                                        "height": 5,
+                                        "price": 9,
+                                        "currency_code": "USD",
+                                        "is_fragile": true,
+                                        "is_dangerous": false,
+                                        "is_perishable": false,
+                                        "is_compound": false
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/channels/23/orders/790"
+                                },
+                                "channel": {
+                                    "href": "/channels/23"
+                                }
+                            },
+                            "id": 568,
+                            "external_order_id": "790",
+                            "sales_channel_id": 23,
+                            "order_date": "2014-06-19T19:21:32Z",
+                            "paid_date": "",
+                            "bill_to_is_company": false,
+                            "bill_to_name": "",
+                            "bill_to_country": "",
+                            "bill_to_state": "",
+                            "bill_to_city": "",
+                            "bill_to_zip": "",
+                            "bill_to_address1": "",
+                            "bill_to_address2": "",
+                            "bill_to_email": "",
+                            "bill_to_phone": "",
+                            "bill_to_fax": "",
+                            "ship_to_is_company": false,
+                            "ship_to_name": "Hank Green",
+                            "ship_to_country": "US",
+                            "ship_to_state": "MN",
+                            "ship_to_city": "St. Louis Park",
+                            "ship_to_zip": "55416",
+                            "ship_to_address1": "3540 Dakota Ave. S.",
+                            "ship_to_address2": "",
+                            "ship_to_email": "hank@bluedrone.com",
+                            "ship_to_phone": "1-800-594-4730",
+                            "ship_to_fax": "",
+                            "notes_from_customer": "",
+                            "notes_to_customer": "",
+                            "product_subtotal": 29,
+                            "shipping": 5,
+                            "discount": 0,
+                            "tax": "",
+                            "order_total": 34,
+                            "currency_code": "USD",
+                            "status": "active",
+                            "_embedded": {
+                                "order_lines": [
+                                    {
+                                        "_links": {
+                                            "self": {
+                                                "href": "/products/2345-09-F-RED"
+                                            }
+                                        },
+                                        "id": 7900
+                                        "product_id": 25,
+                                        "sku": '2345-09-F-RED',
+                                        "quantity": 4,
+                                        "name": "Gheisa Hair Pin Red",
+                                        "unit_system": "imperial",
+                                        "weight": 10,
+                                        "length": 4,
+                                        "width": 1,
+                                        "height": 1,
+                                        "price": 3.5,
+                                        "currency_code": "USD",
+                                        "is_fragile": true,
+                                        "is_dangerous": false,
+                                        "is_perishable": false,
+                                        "is_compound": false
+                                    },
+                                    {
+                                        "_links": {
+                                            "self": {
+                                                "href": "/products/12345-09-M-XL-WHT"
+                                            }
+                                        },
+                                        "id": 791,
+                                        "product_id": 23,
+                                        "sku": "12345-09-M-XL-WHT",
+                                        "quantity": 2,
+                                        "name": "Japanese Kimono Men's Large White",
+                                        "unit_system": "imperial",
+                                        "weight": 100,
+                                        "length": 10,
+                                        "width": 10,
+                                        "height": 5,
+                                        "price": 7.5,
+                                        "currency_code": "USD",
+                                        "is_fragile": false,
+                                        "is_dangerous": false,
+                                        "is_perishable": false,
+                                        "is_compound": false
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "total": 6,
+                "count": 2,
+                "limit": 2,
+                "offset": 2
+            }
+
+## Order [/channels/{sales_channel_id}/orders/{external_order_id}]
+
+A single Order with all it's details. A Product is always referred to by using the SKU.
+
++ Parameters
+    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
+
++ Model (application/hal+json)
+
+    HAL+JSON representation of the Order Resource. 
+    In addition to representing its state in the JSON form it offers affordances 
+    in the form of the HTTP Link header and HAL links.
+    
+    + Headers
+    
+            Link: <http:/api.bluedrone.com/channels/23/orders/789>;rel="self", <http:/api.bluedrone.com/channels/23>;rel="channels"
+    
+    + Body
+    
+            {
+                "_links": {
+                    "self": {
+                        "href": "/channels/23/orders/789"
+                    },
+                    "channel": {
+                        "href": "/channels/23"
+                    }
+                },
+                "id": 567,
+                "external_order_id": "789",
+                "sales_channel_id": 23,
+                "order_date": "2014-06-19T19:12:32Z",
+                "paid_date": "",
+                "bill_to_is_company": false,
+                "bill_to_name": "",
+                "bill_to_country": "",
+                "bill_to_state": "",
+                "bill_to_city": "",
+                "bill_to_zip": "",
+                "bill_to_address1": "",
+                "bill_to_address2": "",
+                "bill_to_email": "",
+                "bill_to_phone": "",
+                "bill_to_fax": "",
+                "ship_to_is_company": true,
+                "ship_to_name": "John Green",
+                "ship_to_country": "US",
+                "ship_to_state": "MN",
+                "ship_to_city": "St. Louis Park",
+                "ship_to_zip": "55416",
+                "ship_to_address1": "3540 Dakota Ave. S.",
+                "ship_to_address2": "",
+                "ship_to_email": "john@bluedrone.com",
+                "ship_to_phone": "1-800-594-4730 ",
+                "ship_to_fax": "",
+                "notes_from_customer": "Please deliver after 4 PM.",
+                "notes_to_customer": "The package is wrapped in additional material in order to protect it from damage.",
+                "product_subtotal": 18.5,
+                "shipping": 5,
+                "discount": 3,
+                "tax": "",
+                "order_total": 25.5,
+                "currency_code": "USD",
+                "status": "active",
+                "_embedded": {
+                    "order_lines": [
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/products/2345-09-F-RED"
+                                }
+                            },
+                            "id": 7898
+                            "product_id": 25,
+                            "sku": '2345-09-F-RED',
+                            "quantity": 1,
+                            "name": "Gheisa Hair Pin Red",
+                            "unit_system": "imperial",
+                            "weight": 10,
+                            "length": 4,
+                            "width": 1,
+                            "height": 1,
+                            "price": 5,
+                            "currency_code": "USD",
+                            "is_fragile": true,
+                            "is_dangerous": false,
+                            "is_perishable": false,
+                            "is_compound": false
+                        },
+                        {
+                            "_links": {
+                                "self": {
+                                    "href": "/products/12345-09-M-XL-WHT"
+                                }
+                            },
+                            "id": 7899,
+                            "product_id": 23,
+                            "sku": "12345-09-M-XL-WHT",
+                            "quantity": 2,
+                            "name": "Japanese Kimono Men's Large White",
+                            "unit_system": "imperial",
+                            "weight": 100,
+                            "length": 10,
+                            "width": 10,
+                            "height": 5,
+                            "price": 9,
+                            "currency_code": "USD",
+                            "is_fragile": false,
+                            "is_dangerous": false,
+                            "is_perishable": false,
+                            "is_compound": false
+                        }
+                    ]
+                }
+            }
+
+### Create or update an Order [PUT]
+
+The Order object sent to the server has the properties described in the following table.
+
+| Property | Description | Type | Constraints |
+| --- | --- | --- | --- |
+| `order_date` | The date&time at which the order was created in your platform. | string | Required. ISO 8601 format. |
+| `paid_date` | The date&time at which the order was paid in your platform. | string | Optional. ISO 8601 format. |
+| `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean | Optional. |
+| `bill_to_name` | The billing name. | sting | Optional. 100 chars or less. |
+| `bill_to_country` | The billing country. | string | Optional. Exactly 2 chars, in ISO 3166-1 format. |
+| `bill_to_state` | The billing state. For US states, you can use the 2 letter state code or the full state name. | string | Optional. 100 chars or less. |
+| `bill_to_city` | The billing city. | string | Optional. 100 chars or less. |
+| `bill_to_zip` | The billing zip/postal code. | string | Optional. 16 chars or less. |
+| `bill_to_address1` | The billing address. | string | Optional. 100 chars or less. |
+| `bill_to_address2` | Additional field for the billing address. | string | Optional. 10 chars or less. |
+| `bill_to_email` | The billing email address. | string | Optional. 100 chars or less. |
+| `bill_to_phone` | The billing phone number. | string | Optional. 20 chars or less. |
+| `bill_to_fax` | The billing fax number. | string | Optional. 20 chars or less. |
+| `ship_to_is_company` | Tells if the shipping target is a company or an individual. | boolean | Required. |
+| `ship_to_name` | The shipping name. | sting | Required. 100 chars or less. |
+| `ship_to_country` | The shipping country. | string | Required. Exactly 2 chars, in ISO 3166-1 format. |
+| `ship_to_state` | The shipping state. For US states, you can use the 2 letter state code or the full state name. | string | Required. 100 chars or less. |
+| `ship_to_city` | The shipping city. | string | Required. 100 chars or less. |
+| `ship_to_zip` | The shipping zip/postal code. | string | Required. 16 chars or less. |
+| `ship_to_address1` | The shipping address. | string | Required. 100 chars or less. |
+| `ship_to_address2` | Additional field for the shipping address. | string | Required. 100 chars or less. |
+| `ship_to_email` | The shipping email address. | string | Required. 100 chars or less. |
+| `ship_to_phone` | The shipping phone number. | string | Required. 20 chars or less. |
+| `ship_to_fax` | The shipping fax number. | string | Optional. 20 chars or less. |
+| `notes_from_customer` | These notes can be any customer instructions whether about packing or delivery. | string | Optional. 2000 chars or less. |
+| `notes_to_customer` | These notes will be included in the packing slip. | string | Optional. 2000 chars or less. |
+| `product_subtotal` | The cumulated price of all Products in the Order. | decimal | Optional. |
+| `shipping` | The shipping cost presented to the customer. Will be included in the packing slip. | decimal | Optional. |
+| `discount` | The discount amount presented to the customer. Will be included in the packing slip. | decimal | Optional. |
+| `tax` | The tax amount presented to the customer. Wil be included in the packing slip. | decimal | Optional. |
+| `order_total` | The total order price that includes the shipping costs, discounts or taxes. | decimal | Optional. |
+| `currency_code` | The 3 letter currency code that prices are expressed in. | string | Required. Exactly 3 letters, in ISO 4217 format. | 
+| `order_lines` | An array of OrderLine objects | array | Required. At least one array element. |
+
+The OrderLine objects which are part of the `order_lines` collection have the properties described in the following table.
+
+| Property | Description | Type | Constraints |
+| --- | --- | --- | --- |
+| `sku` | The product SKU for the order line. The product MUST exist inside bluedrone before attempting to import the order. | string | Required. |
+| `quantity` | The number of units for the Product. | integer | Required. |
+| `price` | The product price. If not present, the price of the product that exists in bluedrone is used. | decimal | Optional. |
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+    
+    + Body
+    
+            {
+                "order_date": "2014-06-19T19:12:32Z",
+                "ship_to_is_company": false,
+                "ship_to_name": "John Green",
+                "ship_to_country": "US",
+                "ship_to_state": "MN",
+                "ship_to_city": "St. Louis Park",
+                "ship_to_zip": "55416",
+                "ship_to_address1": "3540 Dakota Ave. S.",
+                "ship_to_address2": "",
+                "ship_to_email": "john@bluedrone.com",
+                "ship_to_phone": "1-800-594-4730 ",
+                "ship_to_fax": "",
+                "notes_from_customer": "Please deliver after 4 PM.",
+                "notes_to_customer": "The package is wrapped in additional material in order to protect it from damage.",
+                "product_subtotal": 18.5,
+                "shipping": 5,
+                "discount": 3,
+                "tax": 0,
+                "order_total": 25.5,
+                "currency_code": "USD",
+                "order_lines": [
+                    {
+                        "sku": "12345-09-M-XL-WHT",
+                        "quantity": 2,
+                        "price": 9
+                    },
+                    {
+                        "sku": "2345-09-F-RED",
+                        "quantity": 1,
+                        "price": 5
+                    }
+                ]
+            }
+
+    + Schema
+    
+            {
+                "$schema": "http://json-schema.org/schema#",
+                "definitions": {
+                    "currency_code": {
+                        "enum": ["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BWP", "BYR", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "GBP", "GEL", "GHS", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KHR", "KMF", "KRW", "KWD", "KZT", "LBP", "LKR", "LRD", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MOP", "MUR", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SDG", "SEK", "SGD", "SOS", "STD", "SYP", "THB", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VEF", "VND", "XAF", "XOF", "YER", "ZAR", "ZMK"]
+                    },
+                    "country": {
+                        "enum": ["AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CW", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SX", "SK", "SI", "SB", "SO", "ZA", "GS", "SS", "ES", "LK", "SD", "SR", "SJ", "SZ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW"]
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "format": "email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "zip": {
+                        "type": "string",
+                        "maxLength": 16
+                    }
+                },
+                "title": "Order",
+                "type": "object",
+                "properties": {
+                    "order_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "paid_date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "bill_to_is_company": {
+                        "type": "boolean"
+                    },
+                    "bill_to_name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "bill_to_country": {
+                        "$ref": "#/definitions/country"
+                    },
+                    "bill_to_state": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "bill_to_city": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "bill_to_zip": {
+                        "$ref": "#/definitions/zip"
+                    },
+                    "bill_to_address1": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "bill_to_address2": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "bill_to_email": {
+                        "$ref": "#/definitions/email"
+                    },
+                    "bill_to_phone": {
+                        "$ref": "#/definitions/phone"
+                    },
+                    "bill_to_fax": {
+                        "$ref": "#/definitions/phone"
+                    },
+                    "ship_to_is_company": {
+                        "type": "boolean"
+                    },
+                    "ship_to_name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ship_to_country": {
+                        "$ref": "#/definitions/country"
+                    },
+                    "ship_to_state": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ship_to_city": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ship_to_zip": {
+                        "$ref": "#/definitions/zip"
+                    },
+                    "ship_to_address1": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ship_to_address2": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ship_to_email": {
+                        "$ref": "#/definitions/email"
+                    },
+                    "ship_to_phone": {
+                        "$ref": "#/definitions/phone"
+                    },
+                    "ship_to_fax": {
+                        "$ref": "#/definitions/phone"
+                    },
+                    "notes_from_customer": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "notes_to_customer": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "product_subtotal": {
+                        "type": "number"
+                    },
+                    "shipping": {
+                        "type": "number"
+                    },
+                    "discount": {
+                        "type": "number"
+                    },
+                    "tax": {
+                        "type": "number"
+                    },
+                    "order_total": {
+                        "type": "number"
+                    },
+                    "currency_code": {
+                        "$ref": "#/definitions/currency_code"
+                    },
+                    "order_lines": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "title": "OrderLine",
+                            "type": "object",
+                            "properties": {
+                                "sku": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "minimum": 1
+                                },
+                                "price": {
+                                    "type": "number"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": ["sku", "quantity"]
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["order_date", "ship_to_is_company", "ship_to_name", "ship_to_country", "ship_to_state", "ship_to_city", "ship_to_zip", "ship_to_address1", "ship_to_email", "ship_to_phone", "currency_code", "order_lines"]
+            }
+            
++ Response 201 (application/hal+json)
+
+    [Order][]
+
+### Retrieve an Order [GET]
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 200 (application/hal+json)
+
+    [Order][]
+
+### Delete an Order [DELETE]
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
+
++ Response 204

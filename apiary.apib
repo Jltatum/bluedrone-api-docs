@@ -358,7 +358,7 @@ the actual array of _Product_ objects whose properties have been described at th
                 "offset": 2
             }
     
-## Product [/products/{sku}]
+## Product [/products/{sku}{?unit_system}]
 
 A single Product with all it's details. A Product is always referred to by using the SKU.
 
@@ -506,6 +506,10 @@ The properties and the contraints are described below.
 
 ### Retrieve a Product [GET]
 
++ Parameters
+    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
+    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Product measurements.
+    
 + Request
 
     + Headers
@@ -588,7 +592,6 @@ the only difference being a few more properties:
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
 | `price` | The estimated Product price in the currency of choice. | decimal |
-| `currency_code` | The [ISO-4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for the price. | string |
 | `is_fragile` | Tells if the associated Product is fragile. | boolean | 
 | `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
 | `is_perishable` | Tells if the associated Product is perishable. | boolean |
@@ -716,7 +719,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 1,
                                         "height": 1,
                                         "price": 5,
-                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -738,7 +740,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 10,
                                         "height": 5,
                                         "price": 9,
-                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -811,7 +812,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 1,
                                         "height": 1,
                                         "price": 3.5,
-                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -833,7 +833,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 10,
                                         "height": 5,
                                         "price": 7.5,
-                                        "currency_code": "USD",
                                         "is_fragile": false,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -850,7 +849,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                 "offset": 2
             }
 
-## Order [/channels/{sales_channel_id}/orders/{external_order_id}]
+## Order [/channels/{sales_channel_id}/orders/{external_order_id}{?unit_system}]
 
 A single Order with all it's details. A Product is always referred to by using the SKU.
 
@@ -934,7 +933,6 @@ A single Order with all it's details. A Product is always referred to by using t
                             "width": 1,
                             "height": 1,
                             "price": 5,
-                            "currency_code": "USD",
                             "is_fragile": true,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -956,7 +954,6 @@ A single Order with all it's details. A Product is always referred to by using t
                             "width": 10,
                             "height": 5,
                             "price": 9,
-                            "currency_code": "USD",
                             "is_fragile": false,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -1228,6 +1225,11 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
     [Order][]
 
 ### Retrieve an Order [GET]
++ Parameters
+    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
+    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Product measurements.
+
 + Request
 
     + Headers
@@ -1276,7 +1278,7 @@ In both cases, the _Shipment_ objects have the following properties:
 | `length` | The cumulated price of all Products in the Order. | decimal |
 | `width` | The cumulated price of all Products in the Order. | decimal |
 | `height` | The cumulated price of all Products in the Order. | decimal |
-| `shipped_at` | The date and time at which the shipment was shipped in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
+| `shipped_on` | The date and time at which the shipment was shipped in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
 | `shipped_with` | The courier used for shipping. It can have the following values: "usps", "ups", "fedex" | string |
 | `tracking_code` | The shipment courier tracking code. | string |
 | `status` | Can have one of the values: "unshipped", "shipped", "on_hold", "cancelled" | string |
@@ -1399,7 +1401,7 @@ the actual array of _Shipment_ objects whose properties have been described at t
                             "length": "40",
                             "width": "20",
                             "height": "10",
-                            "shipped_at": "2014-06-19T19:12:32Z",
+                            "shipped_on": "2014-06-19T00:00:00Z",
                             "shipped_with": "usps",
                             "tracking_code": "9499907123456123456781",
                             "status": "shipped",
@@ -1513,7 +1515,7 @@ A single Order with all it's details. A Product is always referred to by using t
                 "length": "40",
                 "width": "20",
                 "height": "10",
-                "shipped_at": "2014-06-19T19:12:32Z",
+                "shipped_on": "2014-06-19T00:00:00Z",
                 "shipped_with": "usps",
                 "tracking_code": "9499907123456123456781",
                 "status": "shipped",
@@ -1597,7 +1599,7 @@ _Hook_ objects have the following properties:
 | --- | --- | --- |
 | `id` | The Bluedrone internal ID associated to this Hook. | integer |
 | `sales_channel_id` | The Bluedrone Sales Channel ID which this Hook is registered for. | integer |
-| `event` | The event name you are subscribing for. Can be one of: "order.activate", "order.cancel", "shipment.create", "shipment.ship", "shipment.onhold", "shipment.cancel" | string |
+| `event` | The event name you are subscribing for. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" | string |
 | `url` | The URL to be called when the event occurs. | string |
 | `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. You can use it to verify that these requests are indeed coming from Bluedrone and not from a third party. | string |
 | `modified_at` | The date and time the Hook was modified at in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
@@ -1692,8 +1694,9 @@ The properties and the contraints are described below.
 
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
-| `event` | The event name you are subscribing for. | string | Required. Can be one of: "order.activate", "order.cancel", "shipment.create", "shipment.ship", "shipment.onhold", "shipment.cancel" |
+| `event` | The event name you are subscribing for. | string | Required. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" |
 | `url` | The URL to be called when the event occurs. | string | Required. 255 chars or less. |
+| `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. | string | Required. 255 chars or less. |
 
 + Parameters
     + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
@@ -1718,7 +1721,7 @@ The properties and the contraints are described below.
                 "$schema": "http://json-schema.org/schema#",
                 "definitions": {
                     "event": {
-                        "enum": ["order.activate", "order.cancel", "shipment.create", "shipment.ship", "shipment.onhold", "shipment.cancel"]
+                        "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
                     }
                 },
                 "title": "Hook",
@@ -1813,7 +1816,7 @@ The properties and the contraints are described below.
 
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
-| `event` | The event name you are subscribing for. | string | Optional. Can be one of: "order.activate", "order.cancel", "shipment.create", "shipment.ship", "shipment.onhold", "shipment.cancel" |
+| `event` | The event name you are subscribing for. | string | Optional. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" |
 | `url` | The URL to be called when the event occurs. | string | Optional. 255 chars or less. |
 
 + Request (application/json)
@@ -1835,7 +1838,7 @@ The properties and the contraints are described below.
                 "$schema": "http://json-schema.org/schema#",
                 "definitions": {
                     "event": {
-                        "enum": ["order.activate", "order.cancel", "shipment.create", "shipment.ship", "shipment.onhold", "shipment.cancel"]
+                        "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
                     }
                 },
                 "title": "Hook",

@@ -362,9 +362,6 @@ the actual array of _Product_ objects whose properties have been described at th
 
 A single Product with all it's details. A Product is always referred to by using the SKU.
 
-+ Parameters
-    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
-
 + Model (application/hal+json)
     
     HAL+JSON representation of the Product Resource. 
@@ -408,17 +405,20 @@ The properties and the contraints are described below.
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
 | `sales_channel_id` | The id of the Sales Channel obtained from the Bluedrone interace. | integer | Required. |
-| `name` | The user friendly name of the Product. | string | Required. 100 chars or less. |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string | Required. metric or imperial. |
-| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Required. |
-| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Required. |
-| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Required. |
-| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Required. |
-| `price` | The estimated Product price in the currency of choice. | decimal | Required. |
-| `currency_code` | The 3 letter currency code for the price. | string | Required. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
+| `name` | The user friendly name of the Product. | string | Optional. 100 chars or less. |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
+| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Optional. |
+| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Optional. |
+| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Optional. |
+| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Optional. |
+| `price` | The estimated Product price in the currency of choice. | decimal | Optional. |
+| `currency_code` | The 3 letter currency code for the price. | string | Optional. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
 | `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Required. true or false. |
 | `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Required. true or false. |
 | `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Required. true or false. |
+
++ Parameters
+    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
 
 + Request (application/json)
 
@@ -462,8 +462,7 @@ The properties and the contraints are described below.
                     },
                     "name": {
                         "type": "string",
-                        "maxLength": 100,
-                        "minLength": 1
+                        "maxLength": 100
                     },
                     "unit_system": {
                         "enum": ["metric", "imperial"]
@@ -497,10 +496,10 @@ The properties and the contraints are described below.
                     }
                 },
                 "additionalProperties": false,
-                "required": ["sales_channel_id", "name", "unit_system", "weight", "length", "width", "height", "price", "currency_code", "is_fragile", "is_dangerous", "is_perishable"]
+                "required": ["sales_channel_id", "is_fragile", "is_dangerous", "is_perishable"]
             }
             
-+ Response 201 (application/hal+json)
++ Response 201
 
     [Product][]
 
@@ -516,11 +515,14 @@ The properties and the contraints are described below.
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
 
-+ Response 200 (application/hal+json)
++ Response 200
 
     [Product][]
 
 ### Remove a Product [DELETE]
+
++ Parameters
+    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
 
 + Request
 
@@ -853,10 +855,6 @@ the actual array of _Order_ objects whose properties have been described at the 
 
 A single Order with all it's details. A Product is always referred to by using the SKU.
 
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
-
 + Model (application/hal+json)
 
     HAL+JSON representation of the Order Resource. 
@@ -1000,7 +998,8 @@ The Order object sent to the server has the properties described in the followin
 | `discount` | The discount amount presented to the customer. Will be included in the packing slip. | decimal | Optional. |
 | `tax` | The tax amount presented to the customer. Wil be included in the packing slip. | decimal | Optional. |
 | `order_total` | The total order price that includes the shipping costs, discounts or taxes. | decimal | Optional. |
-| `currency_code` | The 3 letter currency code that prices are expressed in. | string | Required. Exactly 3 letters, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
+| `currency_code` | The 3 letter currency code that prices are expressed in. | string | Optional. Exactly 3 letters, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
 | `order_lines` | An array of OrderLine objects | array | Required. At least one array element. |
 
 The OrderLine objects which are part of the `order_lines` collection have the properties described in the following table.
@@ -1010,6 +1009,15 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
 | `sku` | The product SKU for the order line. The product MUST exist inside bluedrone before attempting to import the order. | string | Required. |
 | `quantity` | The number of units for the Product. | integer | Required. |
 | `price` | The product price. If not present, the price of the product that exists in bluedrone is used. | decimal | Optional. |
+| `name` | The product name for the order line. If not present, the name of the product that exists in bluedrone is used. | string | Optional. |
+| `weight` | The product weight. If not present, the weight of the product that exists in bluedrone is used. | decimal | Optional. |
+| `length` | The product length. If not present, the length of the product that exists in bluedrone is used. | decimal | Optional. |
+| `width` | The product width. If not present, the width of the product that exists in bluedrone is used. | decimal | Optional. |
+| `height` | The product height. If not present, the height of the product that exists in bluedrone is used. | decimal | Optional. |
+
++ Parameters
+    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
 
 + Request (application/json)
 
@@ -1192,6 +1200,9 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                     "currency_code": {
                         "$ref": "#/definitions/currency_code"
                     },
+                    "unit_system": {
+                        "enum": ["metric", "imperial"]
+                    },
                     "order_lines": {
                         "type": "array",
                         "minItems": 1,
@@ -1209,6 +1220,22 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                                 },
                                 "price": {
                                     "type": "number"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                },
+                                "weight": {
+                                    "type": "number"
+                                },
+                                "length": {
+                                    "type": "number"
+                                },
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
                                 }
                             },
                             "additionalProperties": false,
@@ -1217,14 +1244,15 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                     }
                 },
                 "additionalProperties": false,
-                "required": ["order_date", "ship_to_is_company", "ship_to_name", "ship_to_country", "ship_to_state", "ship_to_city", "ship_to_zip", "ship_to_address1", "ship_to_email", "ship_to_phone", "currency_code", "order_lines"]
+                "required": ["order_date", "ship_to_is_company", "ship_to_name", "ship_to_country", "ship_to_state", "ship_to_city", "ship_to_zip", "ship_to_address1", "ship_to_email", "ship_to_phone", "order_lines"]
             }
             
-+ Response 201 (application/hal+json)
++ Response 201
 
     [Order][]
 
 ### Retrieve an Order [GET]
+
 + Parameters
     + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
     + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
@@ -1236,11 +1264,15 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
 
-+ Response 200 (application/hal+json)
++ Response 200
 
     [Order][]
 
 ### Delete an Order [DELETE]
+
++ Parameters
+    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
 
 + Request
 
@@ -1575,7 +1607,7 @@ A single Order with all it's details. A Product is always referred to by using t
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
 
-+ Response 200 (application/hal+json)
++ Response 200
 
     [Shipment][]
 
@@ -1805,7 +1837,7 @@ The properties and the contraints are described below.
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
             
-+ Response 200 (application/hal+json)
++ Response 200
 
     [Hook][]
 
@@ -1855,7 +1887,7 @@ The properties and the contraints are described below.
                 "additionalProperties": false
             }
             
-+ Response 200 (application/hal+json)
++ Response 200
 
     [Hook][]
 

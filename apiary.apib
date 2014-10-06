@@ -413,9 +413,9 @@ The properties and the contraints are described below.
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Optional. |
 | `price` | The estimated Product price in the currency of choice. | decimal | Optional. |
 | `currency_code` | The 3 letter currency code for the price. | string | Optional. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
-| `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Required. true or false. |
-| `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Required. true or false. |
-| `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Required. true or false. |
+| `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Optional. true or false. |
+| `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Optional. true or false. |
+| `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Optional. true or false. |
 
 + Parameters
     + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
@@ -496,7 +496,7 @@ The properties and the contraints are described below.
                     }
                 },
                 "additionalProperties": false,
-                "required": ["sales_channel_id", "is_fragile", "is_dangerous", "is_perishable"]
+                "required": ["sales_channel_id"]
             }
             
 + Response 201

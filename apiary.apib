@@ -1310,6 +1310,8 @@ In both cases, the _Shipment_ objects have the following properties:
 | `length` | The cumulated price of all Products in the Order. | decimal |
 | `width` | The cumulated price of all Products in the Order. | decimal |
 | `height` | The cumulated price of all Products in the Order. | decimal |
+| `labelled_on` | The date and time at which the shipment was labelled in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
+| `printed_on` | The date and time at which the shipment was printed in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
 | `shipped_on` | The date and time at which the shipment was shipped in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
 | `shipped_with` | The courier used for shipping. It can have the following values: "usps", "ups", "fedex" | string |
 | `tracking_code` | The shipment courier tracking code. | string |
@@ -1433,6 +1435,8 @@ the actual array of _Shipment_ objects whose properties have been described at t
                             "length": "40",
                             "width": "20",
                             "height": "10",
+                            "labelled_on": "2014-06-19T00:00:00Z",
+                            "printed_on": "2014-06-19T00:00:00Z",
                             "shipped_on": "2014-06-19T00:00:00Z",
                             "shipped_with": "usps",
                             "tracking_code": "9499907123456123456781",
@@ -1547,6 +1551,8 @@ A single Order with all it's details. A Product is always referred to by using t
                 "length": "40",
                 "width": "20",
                 "height": "10",
+                "labelled_on": "2014-06-19T00:00:00Z",
+                "printed_on": "2014-06-19T00:00:00Z",
                 "shipped_on": "2014-06-19T00:00:00Z",
                 "shipped_with": "usps",
                 "tracking_code": "9499907123456123456781",

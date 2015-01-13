@@ -237,6 +237,7 @@ In both cases, the _Product_ objects have the following properties:
 | `id` | The Bluedrone internal ID associated to this Product. | integer |
 | `sku` | The SKU of the Product. | string |
 | `name` | The user friendly name of the Product. | string |
+| `image_url` | The URL of an image representative of your product. | string |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string |
 | `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
@@ -317,6 +318,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "id": 23,
                             "sku": "12345-09-M-XL-WHT",
                             "name": "Japanese Kimono Men's Large White",
+                            "image_url": "",
                             "unit_system": "imperial",
                             "weight": 100,
                             "length": 10,
@@ -338,6 +340,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "id": 25,
                             "sku": "2345-09-F-RED",
                             "name": "Gheisa Hair Pin Red",
+                            "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                             "unit_system": "imperial",
                             "weight": 10,
                             "length": 4,
@@ -383,6 +386,7 @@ A single Product with all it's details. A Product is always referred to by using
                 "id": 23,
                 "sku": "2345-09-F-RED",
                 "name": "Gheisa Hair Pin Red",
+                "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                 "unit_system": "imperial",
                 "weight": 10,
                 "length": 4,
@@ -406,6 +410,7 @@ The properties and the contraints are described below.
 | --- | --- | --- | --- |
 | `sales_channel_id` | The id of the Sales Channel obtained from the Bluedrone interace. | integer | Required. |
 | `name` | The user friendly name of the Product. | string | Optional. 100 chars or less. |
+| `image_url` | The URL of an image representative of your product. | string | Optional. |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
 | `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Optional. |
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Optional. |
@@ -431,6 +436,7 @@ The properties and the contraints are described below.
             {
                 "sales_channel_id": 23,
                 "name": "Gheisa Hair Pin Red",
+                "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                 "unit_system": "imperial",
                 "weight": 10,
                 "length": 4,
@@ -463,6 +469,10 @@ The properties and the contraints are described below.
                     "name": {
                         "type": "string",
                         "maxLength": 100
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "format": "uri"
                     },
                     "unit_system": {
                         "enum": ["metric", "imperial"]

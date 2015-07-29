@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://api.bluedron.es
+HOST: https://api.bluedrone.com
 
 
 # Bluedrone API
@@ -28,7 +28,7 @@ Instead it offers the initial API affordances in the form of the HTTP Link heade
 + Response 200 (application/hal+json)
     + Headers
     
-            Link: <http:/api.bluedron.es/>;rel="self",<http:/api.bluedron.es/auth/token>;rel="auth",<http:/api.bluedron.es/channels>;rel="channels",<http:/api.bluedron.es/products>;rel="products"
+            Link: <http:/api.bluedrone.com/>;rel="self",<http:/api.bluedrone.com/auth/token>;rel="auth",<http:/api.bluedrone.com/channels>;rel="channels",<http:/api.bluedrone.com/products>;rel="products"
 
     + Body
 
@@ -373,7 +373,7 @@ A single Product with all it's details. A Product is always referred to by using
 
     + Headers
 
-            Link: <http:/api.bluedron.es/products/2345-09-F-RED>;rel="self"
+            Link: <http:/api.bluedrone.com/products/2345-09-F-RED>;rel="self"
 
     + Body
 
@@ -873,7 +873,7 @@ A single Order with all it's details. A Product is always referred to by using t
     
     + Headers
     
-            Link: <http:/api.bluedron.es/channels/23/orders/789>;rel="self", <http:/api.bluedron.es/channels/23>;rel="channels"
+            Link: <http:/api.bluedrone.com/channels/23/orders/789>;rel="self", <http:/api.bluedrone.com/channels/23>;rel="channels"
     
     + Body
     
@@ -1523,7 +1523,7 @@ A single Order with all it's details. A Product is always referred to by using t
     
     + Headers
     
-            Link: <http:/api.bluedron.es/channels/23/orders/789/shipments/901>;rel="self", <http:/api.bluedron.es/channels/23/orders/789>;rel="order", <http:/api.bluedron.es/channels/23>;rel="channels"
+            Link: <http:/api.bluedrone.com/channels/23/orders/789/shipments/901>;rel="self", <http:/api.bluedrone.com/channels/23/orders/789>;rel="order", <http:/api.bluedrone.com/channels/23>;rel="channels"
     
     + Body
     
@@ -1832,7 +1832,7 @@ The properties and the contraints are described below.
     
     + Headers
     
-            Link: <http:/api.bluedron.es/channels/23/hooks/67>;rel="self", <http:/api.bluedron.es/channels/23>;rel="channels"
+            Link: <http:/api.bluedrone.com/channels/23/hooks/67>;rel="self", <http:/api.bluedrone.com/channels/23>;rel="channels"
     
     + Body
     

@@ -1,10 +1,11 @@
 FORMAT: 1A
-HOST: https://api.bluedrone.com
+HOST: http://www.bluedrone.com
 
 
 # Bluedrone API
 
-This Hypermedia API is currently a **work in progress**
+This Hypermedia API is version **0.1 and is deprecated**. 
+Please refer to the latest version which can be found at http://docs.bluedrone.apiary.io/
 
 ## Validation
 
@@ -235,23 +236,22 @@ In both cases, the _Product_ objects have the following properties:
 | Property | Description | Type |
 | --- | --- | --- |
 | `id` | The Bluedrone internal ID associated to this Product. | integer |
-| `sku` | The SKU of the Product. | string |
+| `sku` | The user SKU of the Product. | string |
 | `name` | The user friendly name of the Product. | string |
-| `image_url` | The URL of an image representative of your product. | string |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string |
 | `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
 | `price` | The estimated Product price in the currency of choice. | decimal |
-| `currency_code` | The [ISO-4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for the price. | string |
+| `currency_code` | The ISO-4217 currency code for the price. | string |
 | `is_fragile` | Tells if a Product is fragile. | boolean | 
 | `is_dangerous` | Tells if a Product is dangerous. | boolean |
 | `is_perishable` | Tells if a Product is perishable. | boolean |
 | `is_compound` | Tells if a Product is composed of other Products. | boolean |
 
 
-## Products Collection [/products{?sales_channel_id,unit_system,offset,limit}]
+## Products Collection [/products{?sales_channel_id,offset,limit}]
 
 This link relationship returns a collection of resources. 
 You can easily paginate through this collection using the hypermedia 
@@ -275,7 +275,6 @@ the actual array of _Product_ objects whose properties have been described at th
 
 + Parameters
     + sales_channel_id (optional, number, `1`) ... Allows filtering by Sales Channel.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Product measurements.
     + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
     + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
     
@@ -318,7 +317,6 @@ the actual array of _Product_ objects whose properties have been described at th
                             "id": 23,
                             "sku": "12345-09-M-XL-WHT",
                             "name": "Japanese Kimono Men's Large White",
-                            "image_url": "",
                             "unit_system": "imperial",
                             "weight": 100,
                             "length": 10,
@@ -340,7 +338,6 @@ the actual array of _Product_ objects whose properties have been described at th
                             "id": 25,
                             "sku": "2345-09-F-RED",
                             "name": "Gheisa Hair Pin Red",
-                            "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                             "unit_system": "imperial",
                             "weight": 10,
                             "length": 4,
@@ -361,9 +358,12 @@ the actual array of _Product_ objects whose properties have been described at th
                 "offset": 2
             }
     
-## Product [/products/{sku}{?unit_system}]
+## Product [/products/{sku}]
 
 A single Product with all it's details. A Product is always referred to by using the SKU.
+
++ Parameters
+    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
 
 + Model (application/hal+json)
     
@@ -384,9 +384,8 @@ A single Product with all it's details. A Product is always referred to by using
                     }
                 },
                 "id": 23,
-                "sku": "2345-09-F-RED",
+                "sku": '2345-09-F-RED',
                 "name": "Gheisa Hair Pin Red",
-                "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                 "unit_system": "imperial",
                 "weight": 10,
                 "length": 4,
@@ -409,21 +408,17 @@ The properties and the contraints are described below.
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
 | `sales_channel_id` | The id of the Sales Channel obtained from the Bluedrone interace. | integer | Required. |
-| `name` | The user friendly name of the Product. | string | Optional. 100 chars or less. |
-| `image_url` | The URL of an image representative of your product. | string | Optional. |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
-| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Optional. |
-| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Optional. |
-| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Optional. |
-| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Optional. |
-| `price` | The estimated Product price in the currency of choice. | decimal | Optional. |
-| `currency_code` | The 3 letter currency code for the price. | string | Optional. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
-| `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Optional. true or false. |
-| `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Optional. true or false. |
-| `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Optional. true or false. |
-
-+ Parameters
-    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
+| `name` | The user friendly name of the Product. | string | Required. 100 chars or less. |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" | string | Required. metric or imperial. |
+| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal | Required. |
+| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Required. |
+| `price` | The estimated Product price in the currency of choice. | decimal | Required. |
+| `currency_code` | The 3 letter currency code for the price. | string | Required. ISO-4217 format. | 
+| `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Required. true or false. |
+| `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Required. true or false. |
+| `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Required. true or false. |
 
 + Request (application/json)
 
@@ -436,7 +431,6 @@ The properties and the contraints are described below.
             {
                 "sales_channel_id": 23,
                 "name": "Gheisa Hair Pin Red",
-                "image_url": "http://www.japanesestyle.com/sites/default/files/HO-079.jpg",
                 "unit_system": "imperial",
                 "weight": 10,
                 "length": 4,
@@ -468,11 +462,8 @@ The properties and the contraints are described below.
                     },
                     "name": {
                         "type": "string",
-                        "maxLength": 100
-                    },
-                    "image_url": {
-                        "type": "string",
-                        "format": "uri"
+                        "maxLength": 100,
+                        "minLength": 1
                     },
                     "unit_system": {
                         "enum": ["metric", "imperial"]
@@ -506,33 +497,26 @@ The properties and the contraints are described below.
                     }
                 },
                 "additionalProperties": false,
-                "required": ["sales_channel_id"]
+                "required": ["sales_channel_id", "name", "unit_system", "weight", "length", "width", "height", "price", "currency_code", "is_fragile", "is_dangerous", "is_perishable"]
             }
             
-+ Response 201
++ Response 201 (application/hal+json)
 
     [Product][]
 
 ### Retrieve a Product [GET]
 
-+ Parameters
-    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Product measurements.
-    
 + Request
 
     + Headers
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
 
-+ Response 200
++ Response 200 (application/hal+json)
 
     [Product][]
 
 ### Remove a Product [DELETE]
-
-+ Parameters
-    + sku (required, string, `2345-09-F-RED`) ... The url-escaped `sku` of the Product.
 
 + Request
 
@@ -549,14 +533,14 @@ In both cases, the _Order_ objects have the following properties:
 
 | Property | Description | Type |
 | --- | --- | --- |
-| `id` | The Bluedrone internal ID associated to this Order. | integer |
+| `id` | The Bluedrone internal ID associated to this Product. | integer |
 | `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
 | `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
-| `order_date` | The date&time at which the order was created in your platform. [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-| `paid_date` | The date&time at which the order was paid in your platform. [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
+| `order_date` | The date&time at which the order was created in your platform. | string |
+| `paid_date` | The date&time at which the order was paid in your platform. | string |
 | `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `bill_to_name` | The billing name. | sting |
-| `bill_to_country` | The billing country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string 
+| `bill_to_country` | The billing country. | string 
 | `bill_to_state` | The billing state. For US states, it will be the full state name. | string |
 | `bill_to_city` | The billing city. | string |
 | `bill_to_zip` | The billing zip/postal code. | string |
@@ -567,7 +551,7 @@ In both cases, the _Order_ objects have the following properties:
 | `bill_to_fax` | The billing fax number. | string |
 | `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `ship_to_name` | The shipping name. | sting |
-| `ship_to_country` | The shipping country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string |
+| `ship_to_country` | The shipping country. | string |
 | `ship_to_state` | The shipping state. For US states, it will be the full state name. | string |
 | `ship_to_city` | The shipping city. | string | 
 | `ship_to_zip` | The shipping zip/postal code. | string |
@@ -585,7 +569,6 @@ In both cases, the _Order_ objects have the following properties:
 | `order_total` | The total order price that includes the shipping costs, discounts or taxes. | decimal |
 | `currency_code` | The 3 letter currency code that prices are expressed in. | string |
 | `status` | Can have one of the values: "awaiting_activation", "active", "in_process", "shipped", "cancelled", "on_hold" | string |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
 | `_embedded` | An object with a single property named `order_lines` | object |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`order_lines` | An array of _OrderLine_ objects | array |
 
@@ -596,20 +579,22 @@ the only difference being a few more properties:
 | --- | --- | --- |
 | `id` | The Bluedrone internal ID associated to this OrderLine. | integer |
 | `product_id` | The Bluedrone internal ID associated to the Product that is contained in this OrderLine. | integer |
-| `sku` | The SKU of the Product. | string |
+| `sku` | The user SKU of the Product. | string |
 | `quantity` | The number of units for the Product. | integer |
 | `name` | The user friendly name of the Product. | string |
+| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
 | `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
 | `price` | The estimated Product price in the currency of choice. | decimal |
+| `currency_code` | The ISO-4217 currency code for the price. | string |
 | `is_fragile` | Tells if the associated Product is fragile. | boolean | 
 | `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
 | `is_perishable` | Tells if the associated Product is perishable. | boolean |
 | `is_compound` | Tells if the associated Product is composed of other Products. | boolean |
 
-## Orders Collection [/channels/{sales_channel_id}/orders{?unit_system,offset,limit}]
+## Orders Collection [/channels/{sales_channel_id}/orders{?offset,limit}]
 
 This link relationship returns a collection of Orders. 
 You can easily paginate through this collection using the hypermedia 
@@ -633,7 +618,6 @@ the actual array of _Order_ objects whose properties have been described at the 
 
 + Parameters
     + sales_channel_id (required, number, `1`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for OrderLine measurements.
     + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
     + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
     
@@ -712,7 +696,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                             "order_total": 25.5,
                             "currency_code": "USD",
                             "status": "active",
-                            "unit_system": "imperial",
                             "_embedded": {
                                 "order_lines": [
                                     {
@@ -723,14 +706,16 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         },
                                         "id": 7898
                                         "product_id": 25,
-                                        "sku": "2345-09-F-RED",
+                                        "sku": '2345-09-F-RED',
                                         "quantity": 1,
                                         "name": "Gheisa Hair Pin Red",
+                                        "unit_system": "imperial",
                                         "weight": 10,
                                         "length": 4,
                                         "width": 1,
                                         "height": 1,
                                         "price": 5,
+                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -747,11 +732,13 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "sku": "12345-09-M-XL-WHT",
                                         "quantity": 2,
                                         "name": "Japanese Kimono Men's Large White",
+                                        "unit_system": "imperial",
                                         "weight": 100,
                                         "length": 10,
                                         "width": 10,
                                         "height": 5,
                                         "price": 9,
+                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -805,7 +792,6 @@ the actual array of _Order_ objects whose properties have been described at the 
                             "order_total": 34,
                             "currency_code": "USD",
                             "status": "active",
-                            "unit_system": "imperial",
                             "_embedded": {
                                 "order_lines": [
                                     {
@@ -816,14 +802,16 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         },
                                         "id": 7900
                                         "product_id": 25,
-                                        "sku": "2345-09-F-RED",
+                                        "sku": '2345-09-F-RED',
                                         "quantity": 4,
                                         "name": "Gheisa Hair Pin Red",
+                                        "unit_system": "imperial",
                                         "weight": 10,
                                         "length": 4,
                                         "width": 1,
                                         "height": 1,
                                         "price": 3.5,
+                                        "currency_code": "USD",
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -840,11 +828,13 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "sku": "12345-09-M-XL-WHT",
                                         "quantity": 2,
                                         "name": "Japanese Kimono Men's Large White",
+                                        "unit_system": "imperial",
                                         "weight": 100,
                                         "length": 10,
                                         "width": 10,
                                         "height": 5,
                                         "price": 7.5,
+                                        "currency_code": "USD",
                                         "is_fragile": false,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -861,9 +851,13 @@ the actual array of _Order_ objects whose properties have been described at the 
                 "offset": 2
             }
 
-## Order [/channels/{sales_channel_id}/orders/{external_order_id}{?unit_system}]
+## Order [/channels/{sales_channel_id}/orders/{external_order_id}]
 
 A single Order with all it's details. A Product is always referred to by using the SKU.
+
++ Parameters
+    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
+    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
 
 + Model (application/hal+json)
 
@@ -922,7 +916,6 @@ A single Order with all it's details. A Product is always referred to by using t
                 "order_total": 25.5,
                 "currency_code": "USD",
                 "status": "active",
-                "unit_system": "imperial",
                 "_embedded": {
                     "order_lines": [
                         {
@@ -933,14 +926,16 @@ A single Order with all it's details. A Product is always referred to by using t
                             },
                             "id": 7898
                             "product_id": 25,
-                            "sku": "2345-09-F-RED",
+                            "sku": '2345-09-F-RED',
                             "quantity": 1,
                             "name": "Gheisa Hair Pin Red",
+                            "unit_system": "imperial",
                             "weight": 10,
                             "length": 4,
                             "width": 1,
                             "height": 1,
                             "price": 5,
+                            "currency_code": "USD",
                             "is_fragile": true,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -957,11 +952,13 @@ A single Order with all it's details. A Product is always referred to by using t
                             "sku": "12345-09-M-XL-WHT",
                             "quantity": 2,
                             "name": "Japanese Kimono Men's Large White",
+                            "unit_system": "imperial",
                             "weight": 100,
                             "length": 10,
                             "width": 10,
                             "height": 5,
                             "price": 9,
+                            "currency_code": "USD",
                             "is_fragile": false,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -977,11 +974,11 @@ The Order object sent to the server has the properties described in the followin
 
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
-| `order_date` | The date&time at which the order was created in your platform. | string | Required. [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). |
-| `paid_date` | The date&time at which the order was paid in your platform. | string | Optional. [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). |
+| `order_date` | The date&time at which the order was created in your platform. | string | Required. ISO 8601 format. |
+| `paid_date` | The date&time at which the order was paid in your platform. | string | Optional. ISO 8601 format. |
 | `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean | Optional. |
 | `bill_to_name` | The billing name. | sting | Optional. 100 chars or less. |
-| `bill_to_country` | The billing country. | string | Optional. Exactly 2 chars, in [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). |
+| `bill_to_country` | The billing country. | string | Optional. Exactly 2 chars, in ISO 3166-1 format. |
 | `bill_to_state` | The billing state. For US states, you can use the 2 letter state code or the full state name. | string | Optional. 100 chars or less. |
 | `bill_to_city` | The billing city. | string | Optional. 100 chars or less. |
 | `bill_to_zip` | The billing zip/postal code. | string | Optional. 16 chars or less. |
@@ -992,7 +989,7 @@ The Order object sent to the server has the properties described in the followin
 | `bill_to_fax` | The billing fax number. | string | Optional. 20 chars or less. |
 | `ship_to_is_company` | Tells if the shipping target is a company or an individual. | boolean | Required. |
 | `ship_to_name` | The shipping name. | sting | Required. 100 chars or less. |
-| `ship_to_country` | The shipping country. | string | Required. Exactly 2 chars, in [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). |
+| `ship_to_country` | The shipping country. | string | Required. Exactly 2 chars, in ISO 3166-1 format. |
 | `ship_to_state` | The shipping state. For US states, you can use the 2 letter state code or the full state name. | string | Required. 100 chars or less. |
 | `ship_to_city` | The shipping city. | string | Required. 100 chars or less. |
 | `ship_to_zip` | The shipping zip/postal code. | string | Required. 16 chars or less. |
@@ -1008,8 +1005,7 @@ The Order object sent to the server has the properties described in the followin
 | `discount` | The discount amount presented to the customer. Will be included in the packing slip. | decimal | Optional. |
 | `tax` | The tax amount presented to the customer. Wil be included in the packing slip. | decimal | Optional. |
 | `order_total` | The total order price that includes the shipping costs, discounts or taxes. | decimal | Optional. |
-| `currency_code` | The 3 letter currency code that prices are expressed in. | string | Optional. Exactly 3 letters, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
+| `currency_code` | The 3 letter currency code that prices are expressed in. | string | Required. Exactly 3 letters, in ISO 4217 format. | 
 | `order_lines` | An array of OrderLine objects | array | Required. At least one array element. |
 
 The OrderLine objects which are part of the `order_lines` collection have the properties described in the following table.
@@ -1019,15 +1015,6 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
 | `sku` | The product SKU for the order line. The product MUST exist inside bluedrone before attempting to import the order. | string | Required. |
 | `quantity` | The number of units for the Product. | integer | Required. |
 | `price` | The product price. If not present, the price of the product that exists in bluedrone is used. | decimal | Optional. |
-| `name` | The product name for the order line. If not present, the name of the product that exists in bluedrone is used. | string | Optional. |
-| `weight` | The product weight. If not present, the weight of the product that exists in bluedrone is used. | decimal | Optional. |
-| `length` | The product length. If not present, the length of the product that exists in bluedrone is used. | decimal | Optional. |
-| `width` | The product width. If not present, the width of the product that exists in bluedrone is used. | decimal | Optional. |
-| `height` | The product height. If not present, the height of the product that exists in bluedrone is used. | decimal | Optional. |
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
 
 + Request (application/json)
 
@@ -1210,9 +1197,6 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                     "currency_code": {
                         "$ref": "#/definitions/currency_code"
                     },
-                    "unit_system": {
-                        "enum": ["metric", "imperial"]
-                    },
                     "order_lines": {
                         "type": "array",
                         "minItems": 1,
@@ -1230,22 +1214,6 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                                 },
                                 "price": {
                                     "type": "number"
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "maxLength": 100
-                                },
-                                "weight": {
-                                    "type": "number"
-                                },
-                                "length": {
-                                    "type": "number"
-                                },
-                                "width": {
-                                    "type": "number"
-                                },
-                                "height": {
-                                    "type": "number"
                                 }
                             },
                             "additionalProperties": false,
@@ -1254,679 +1222,25 @@ The OrderLine objects which are part of the `order_lines` collection have the pr
                     }
                 },
                 "additionalProperties": false,
-                "required": ["order_date", "ship_to_is_company", "ship_to_name", "ship_to_country", "ship_to_state", "ship_to_city", "ship_to_zip", "ship_to_address1", "ship_to_email", "ship_to_phone", "order_lines"]
-            }
-            
-+ Response 201
-
-    [Order][]
-
-### Retrieve an Order [GET]
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Product measurements.
-
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-
-+ Response 200
-
-    [Order][]
-
-### Delete an Order [DELETE]
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
-
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-
-+ Response 204
-
-# Group Shipments
-
-_Shipment_ objects can be returned as part of a collection or individually. 
-In both cases, the _Shipment_ objects have the following properties:
-
-| Property | Description | Type |
-| --- | --- | --- |
-| `id` | The Bluedrone internal ID associated to this Shipment. | integer |
-| `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
-| `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
-| `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
-| `ship_to_name` | The shipping name. | sting |
-| `ship_to_country` | The shipping country. | string |
-| `ship_to_state` | The shipping state. For US states, it will be the full state name. | string |
-| `ship_to_city` | The shipping city. | string | 
-| `ship_to_zip` | The shipping zip/postal code. | string |
-| `ship_to_address1` | The shipping address. | string |
-| `ship_to_address2` | Additional field for the shipping address. | string |
-| `ship_to_email` | The shipping email address. | string |
-| `ship_to_phone` | The shipping phone number. | string |
-| `ship_to_fax` | The shipping fax number. | string |
-| `notes_from_customer` | These notes are customer instructions for packing or delivery. | string |
-| `notes_to_customer` | These notes are included in the packing slip. | string |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
-| `weight` | The cumulated price of all Products in the Order. | decimal |
-| `length` | The cumulated price of all Products in the Order. | decimal |
-| `width` | The cumulated price of all Products in the Order. | decimal |
-| `height` | The cumulated price of all Products in the Order. | decimal |
-| `labelled_on` | The date and time at which the shipment was labelled in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-| `printed_on` | The date and time at which the shipment was printed in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-| `shipped_on` | The date and time at which the shipment was shipped in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-| `shipped_with` | The courier used for shipping. It can have the following values: "usps", "ups", "fedex" | string |
-| `tracking_code` | The shipment courier tracking code. | string |
-| `status` | Can have one of the values: "unshipped", "shipped", "on_hold", "cancelled" | string |
-| `_embedded` | An object with a single property named `shipment_lines` | object |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`shipment_lines` | An array of _ShipmentLine_ objects | array |
-
-_ShipmentLine_ objects represent the actual contents of the package. 
-This means that for compound _Products_ only their components will appear as _ShipmentLines_
-
-| Property | Description | Type |
-| --- | --- | --- |
-| `id` | The Bluedrone internal ID associated to this ShipmentLine. | integer |
-| `product_id` | The Bluedrone internal ID associated to the Product that is contained in this ShipmentLine. | integer |
-| `sku` | The SKU of the Product. | string |
-| `lot_id` | The Bluedrone internal ID associated to the Warehouse Lot that this Product is part of. | string |
-| `lot_number` | The Warehouse Lot number. | string |
-| `quantity` | The number of units for the Product. | integer |
-| `name` | The user friendly name of the Product. | string |
-| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
-| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
-| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
-| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
-| `is_fragile` | Tells if the associated Product is fragile. | boolean | 
-| `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
-| `is_perishable` | Tells if the associated Product is perishable. | boolean |
-
-## Shipments Collection [/channels/{sales_channel_id}/orders/{external_order_id}/shipments{?unit_system,offset,limit}]
-
-This link relationship returns a collection of Shipments that belong to an Order. 
-You can easily paginate through this collection using the hypermedia 
-links provided and the link relationships of first, prev, next, and last.
-
-Bluedrone supports partial fulfillment of an Order. This means that there can be multiple Shipments
-per Order.
-
-### List Shipments [GET]
-
-Beside the Hypermedia links present in all responses, the collection has the following properties.
-
-| Collection Property | Description |
-| --- | --- |
-| `count` | The number of Shipments returned. |
-| `total` | The total number of Shipments. |
-| `limit` | The currently used `limit` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
-| `offset` | The currently used `offset` parameter. This is set to the value specified as a prameter in the URL or a default value when the param is not present. |
-
-As you may see in the sample response attached to this operation,
-there is an `_embedded` property. This conform to the HAL specification and in turn contains 
-the actual array of _Shipment_ objects whose properties have been described at the beginning of this section.
-
-
-+ Parameters
-    + sales_channel_id (required, number, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, number, `789`) ... Unique identifier for your order from your e-commerce platform.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Shipment and ShipmentLine measurements.
-    + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
-    + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
-    
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-
-+ Response 200 (application/hal+json)
-
-    + Body
-    
-            {
-                "_links": {
-                    "self": {
-                        "href": "/channels/23/orders/789/shipments"
-                    },
-                    "first": {
-                        "href": "/channels/23/orders/789/shipments?offset=0"
-                    },
-                    "prev": {
-                        "href": "/channels/23/orders/789/shipments?offset=0"
-                    },
-                    "next": {
-                        "href": "/channels/23/orders/789/shipments?offset=0"
-                    },
-                    "last": {
-                        "href": "/channels/23/orders/789/shipments?offset=0"
-                    }
-                },
-                "_embedded": {
-                    "shipments": [
-                        {
-                            "_links": {
-                                "self": {
-                                    "href": "/channels/23/orders/789/shipment/901"
-                                },
-                                "order": {
-                                    "href": "/channels/23/orders/789"
-                                },
-                                "channel": {
-                                    "href": "/channels/23"
-                                }
-                            },
-                            "id": 901,
-                            "external_order_id": "789",
-                            "sales_channel_id": 23,
-                            "ship_to_is_company": false,
-                            "ship_to_name": "John Green",
-                            "ship_to_country": "US",
-                            "ship_to_state": "MN",
-                            "ship_to_city": "St. Louis Park",
-                            "ship_to_zip": "55416",
-                            "ship_to_address1": "3540 Dakota Ave. S.",
-                            "ship_to_address2": "",
-                            "ship_to_email": "john@bluedrone.com",
-                            "ship_to_phone": "1-800-594-4730 ",
-                            "ship_to_fax": "",
-                            "notes_from_customer": "Please deliver after 4 PM.",
-                            "notes_to_customer": "The package is wrapped in additional material in order to protect it from damage.",
-                            "unit_system": "imperial",
-                            "weight": "215",
-                            "length": "40",
-                            "width": "20",
-                            "height": "10",
-                            "labelled_on": "2014-06-19T00:00:00Z",
-                            "printed_on": "2014-06-19T00:00:00Z",
-                            "shipped_on": "2014-06-19T00:00:00Z",
-                            "shipped_with": "usps",
-                            "tracking_code": "9499907123456123456781",
-                            "status": "shipped",
-                            "_embedded": {
-                                "shipment_lines": [
-                                    {
-                                        "_links": {
-                                            "self": {
-                                                "href": "/products/2345-09-F-RED"
-                                            }
-                                        },
-                                        "id": 7898
-                                        "product_id": 25,
-                                        "sku": "2345-09-F-RED",
-                                        "lot_id": "233",
-                                        "lot_number": "FDA236354763475",
-                                        "quantity": 1,
-                                        "name": "Gheisa Hair Pin Red",
-                                        "weight": 10,
-                                        "length": 4,
-                                        "width": 1,
-                                        "height": 1,
-                                        "is_fragile": true,
-                                        "is_dangerous": false,
-                                        "is_perishable": false
-                                    },
-                                    {
-                                        "_links": {
-                                            "self": {
-                                                "href": "/products/12345-09-M-XL-WHT"
-                                            }
-                                        },
-                                        "id": 7899,
-                                        "product_id": 23,
-                                        "sku": "12345-09-M-XL-WHT",
-                                        "lot_id": "234",
-                                        "lot_number": "25654642624",
-                                        "quantity": 2,
-                                        "name": "Japanese Kimono Men's Large White",
-                                        "weight": 100,
-                                        "length": 10,
-                                        "width": 10,
-                                        "height": 5,
-                                        "is_fragile": true,
-                                        "is_dangerous": false,
-                                        "is_perishable": false
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                "total": 1,
-                "count": 1,
-                "limit": 1,
-                "offset": 0
-            }
-
-## Shipment [/channels/{sales_channel_id}/orders/{external_order_id}/shipments/{id}{?unit_system}]
-
-A single Order with all it's details. A Product is always referred to by using the SKU.
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + external_order_id (required, string, `789`) ... Unique identifier for your order from your e-commerce platform.
-    + id (required, string, `901`) ... The Bluedrone ID of this Shipment.
-    + unit_system = `metric` (optional, string, `imperial`) ... Allows you to specify a unit system for Shipment and ShipmentLine measurements.
-
-+ Model (application/hal+json)
-
-    HAL+JSON representation of the Shipment Resource. 
-    In addition to representing its state in the JSON form it offers affordances 
-    in the form of the HTTP Link header and HAL links.
-    
-    + Headers
-    
-            Link: <http:/api.bluedrone.com/channels/23/orders/789/shipments/901>;rel="self", <http:/api.bluedrone.com/channels/23/orders/789>;rel="order", <http:/api.bluedrone.com/channels/23>;rel="channels"
-    
-    + Body
-    
-            {
-                "_links": {
-                    "self": {
-                        "href": "/channels/23/orders/789/shipment/901"
-                    },
-                    "order": {
-                        "href": "/channels/23/orders/789"
-                    },
-                    "channel": {
-                        "href": "/channels/23"
-                    }
-                },
-                "id": 901,
-                "external_order_id": "789",
-                "sales_channel_id": 23,
-                "ship_to_is_company": false,
-                "ship_to_name": "John Green",
-                "ship_to_country": "US",
-                "ship_to_state": "MN",
-                "ship_to_city": "St. Louis Park",
-                "ship_to_zip": "55416",
-                "ship_to_address1": "3540 Dakota Ave. S.",
-                "ship_to_address2": "",
-                "ship_to_email": "john@bluedrone.com",
-                "ship_to_phone": "1-800-594-4730 ",
-                "ship_to_fax": "",
-                "notes_from_customer": "Please deliver after 4 PM.",
-                "notes_to_customer": "The package is wrapped in additional material in order to protect it from damage.",
-                "unit_system": "imperial",
-                "weight": "215",
-                "length": "40",
-                "width": "20",
-                "height": "10",
-                "labelled_on": "2014-06-19T00:00:00Z",
-                "printed_on": "2014-06-19T00:00:00Z",
-                "shipped_on": "2014-06-19T00:00:00Z",
-                "shipped_with": "usps",
-                "tracking_code": "9499907123456123456781",
-                "status": "shipped",
-                "_embedded": {
-                    "shipment_lines": [
-                        {
-                            "_links": {
-                                "self": {
-                                    "href": "/products/2345-09-F-RED"
-                                }
-                            },
-                            "id": 7898
-                            "product_id": 25,
-                            "sku": "2345-09-F-RED",
-                            "lot_id": "233",
-                            "lot_number": "FDA236354763475",
-                            "quantity": 1,
-                            "name": "Gheisa Hair Pin Red",
-                            "weight": 10,
-                            "length": 4,
-                            "width": 1,
-                            "height": 1,
-                            "is_fragile": true,
-                            "is_dangerous": false,
-                            "is_perishable": false
-                        },
-                        {
-                            "_links": {
-                                "self": {
-                                    "href": "/products/12345-09-M-XL-WHT"
-                                }
-                            },
-                            "id": 7899,
-                            "product_id": 23,
-                            "sku": "12345-09-M-XL-WHT",
-                            "lot_id": "234",
-                            "lot_number": "25654642624",
-                            "quantity": 2,
-                            "name": "Japanese Kimono Men's Large White",
-                            "weight": 100,
-                            "length": 10,
-                            "width": 10,
-                            "height": 5,
-                            "is_fragile": true,
-                            "is_dangerous": false,
-                            "is_perishable": false
-                        }
-                    ]
-                }
-            }
-
-
-### Retrieve a Shipment [GET]
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-
-+ Response 200
-
-    [Shipment][]
-
-# Group Hooks
-
-You can use _Hooks_ to subscribe to an event such as an Order being shipped.
-When the event occurs within Bluedrone, your Hook URL will receive a POST with the relevant data.
-
-This mechanism is offered as an alternative to polling and is advantageous for both parties:
-you get close to realtime notifications, save bandwidth and we get a lower number of requests.
-Note that once we introduce throttling on our API calls you will be forced to use Hooks
-because otherwise you will end up being denied if too many requests are issued on your side.
-
-The payload received by your Hook URL is in JSON format and depends on the event type. 
-Order related events will receive a complete Order object and the Shipment related ones
-will receive a Shipment object.
-
-_Hook_ objects have the following properties:
-
-| Property | Description | Type |
-| --- | --- | --- |
-| `id` | The Bluedrone internal ID associated to this Hook. | integer |
-| `sales_channel_id` | The Bluedrone Sales Channel ID which this Hook is registered for. | integer |
-| `event` | The event name you are subscribing for. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" | string |
-| `url` | The URL to be called when the event occurs. | string |
-| `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. You can use it to verify that these requests are indeed coming from Bluedrone and not from a third party. | string |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
-| `modified_at` | The date and time the Hook was modified at in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-| `created_at` | The date and time the Hook was create at in [ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601). | string |
-
-
-## Hooks Collection [/channels/{sales_channel_id}/hooks{?offset,limit}]
-
-### List Hooks [GET]
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + offset = `0` (optional, number, `1`) ... The `offset` within the collection at which to start.
-    + limit = `100` (optional, number, `20`) ... The number of items to return. Maximum value `100`.
-
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-            
-+ Response 200 (application/hal+json)
-
-    + Body
-    
-            {
-                "_links": {
-                    "self": {
-                        "href": "/channels/23/hooks?offset=2&limit=2"
-                    },
-                    "first": {
-                        "href": "/channels/23/hooks?limit=2"
-                    },
-                    "prev": {
-                        "href": "/channels/23/hooks?offset=0&limit=2"
-                    },
-                    "next": {
-                        "href": "/channels/23/hooks?offset=4&limit=2"
-                    },
-                    "last": {
-                        "href": "/channels/23/hooks?offset=4&limit=2"
-                    }
-                },
-                "_embedded": {
-                    "hooks": [
-                        {
-                            "_links": {
-                                "self": {
-                                    "href": "/channels/23/hooks/67"
-                                },
-                                "channel": {
-                                    "href": "/channels/23"
-                                }
-                            },
-                            "id": 67,
-                            "sales_channel_id": 23,
-                            "event": "shipment.create",
-                            "url": "http://yourplatform/bluedrone-hooks/shipment-create",
-                            "secret": "199eee3e44c074f7b308e852a02ce92f",
-                            "unit_system": "imperial",
-                            "modified_at": "2014-06-19T19:12:32Z"
-                            "created_at": "2014-06-19T19:12:32Z"
-                        },
-                        {
-                            "_links": {
-                                "self": {
-                                    "href": "/channels/23/hooks/68"
-                                },
-                                "channel": {
-                                    "href": "/channels/23"
-                                }
-                            },
-                            "id": 68,
-                            "sales_channel_id": 23,
-                            "event": "shipment.ship",
-                            "url": "http://yourplatform/bluedrone-hooks/shipment-ship",
-                            "secret": "f0bb59bab8041b6257398eebd0f99695",
-                            "unit_system": "metric",
-                            "modified_at": "2014-06-19T19:12:32Z",
-                            "created_at": "2014-06-19T19:12:32Z"
-                        }
-                    ]
-                },
-                "total": 6,
-                "count": 2,
-                "limit": 2,
-                "offset": 2
-            }
-
-### Create a Hook [POST]
-
-This allows you to create Hook.
-The properties and the contraints are described below.
-
-| Property | Description | Type | Constraints |
-| --- | --- | --- | --- |
-| `event` | The event name you are subscribing for. | string | Required. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" |
-| `url` | The URL to be called when the event occurs. | string | Required. 255 chars or less. |
-| `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. | string | Required. 255 chars or less. |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
-
-+ Parameters
-    + sales_channel_id (required, integer, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-
-+ Request
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-    
-    + Body
-    
-            {
-                "event": "shipment.create",
-                "url": "http://yourplatform/bluedrone-hooks/shipment-create",
-            }
-
-    + Schema
-    
-            
-            {
-                "$schema": "http://json-schema.org/schema#",
-                "definitions": {
-                    "event": {
-                        "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
-                    },
-                    "unit_system": {
-                        "enum": ["imperial", "metric"]
-                    }
-                },
-                "title": "Hook",
-                "type": "object",
-                "properties": {
-                    "event": {
-                        "$ref": "#/definitions/event"
-                    },
-                    "url": {
-                        "type": "string",
-                        "format": "uri"
-                    },
-                    "unit_system": {
-                        "$ref": "#/definitions/unit_system"
-                    }
-                },
-                "additionalProperties": false
+                "required": ["order_date", "ship_to_is_company", "ship_to_name", "ship_to_country", "ship_to_state", "ship_to_city", "ship_to_zip", "ship_to_address1", "ship_to_email", "ship_to_phone", "currency_code", "order_lines"]
             }
             
 + Response 201 (application/hal+json)
 
-    + Body
-    
-            {
-                "_links": {
-                    "self": {
-                        "href": "/channels/23/hooks/67"
-                    },
-                    "channel": {
-                        "href": "/channels/23"
-                    }
-                },
-                "id": 67,
-                "sales_channel_id": 23,
-                "event": "shipment.create",
-                "url": "http://yourplatform/bluedrone-hooks/shipment-create",
-                "secret": "199eee3e44c074f7b308e852a02ce92f",
-                "unit_system": "metric",
-                "modified_at": "2014-06-19T19:12:32Z"
-                "created_at": "2014-06-19T19:12:32Z"
-            }
+    [Order][]
 
-## Hook [/channels/{sales_channel_id}/hooks/{id}]
-
-+ Parameters
-    + sales_channel_id (required, number, `23`) ... The ID of the Bluedrone Sales Channel on which you operate.
-    + id (required, number, `67`) ... The Bluedrone Hook ID.
-
-+ Model (application/hal+json)
-
-    HAL+JSON representation of the Hook Resource. 
-    In addition to representing its state in the JSON form it offers affordances 
-    in the form of the HTTP Link header and HAL links.
-    
-    + Headers
-    
-            Link: <http:/api.bluedrone.com/channels/23/hooks/67>;rel="self", <http:/api.bluedrone.com/channels/23>;rel="channels"
-    
-    + Body
-    
-            {
-                "_links": {
-                    "self": {
-                        "href": "/channels/23/hooks/67"
-                    },
-                    "channel": {
-                        "href": "/channels/23"
-                    }
-                },
-                "id": 67,
-                "sales_channel_id": 23,
-                "event": "shipment.create",
-                "url": "http://yourplatform/bluedrone-hooks/shipment-create",
-                "secret": "199eee3e44c074f7b308e852a02ce92f",
-                "unit_system": "imperial",
-                "modified_at": "2014-06-19T19:12:32Z",
-                "created_at": "2014-06-19T19:12:32Z"
-            }
-
-    
-### Retrieve a Hook [GET]
-
+### Retrieve an Order [GET]
 + Request
 
     + Headers
     
             Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-            
-+ Response 200
 
-    [Hook][]
++ Response 200 (application/hal+json)
 
-### Update a Hook [PUT]
+    [Order][]
 
-This allows you to update an existing Hook.
-The properties and the contraints are described below.
-
-| Property | Description | Type | Constraints |
-| --- | --- | --- | --- |
-| `event` | The event name you are subscribing for. | string | Optional. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" |
-| `url` | The URL to be called when the event occurs. | string | Optional. 255 chars or less. |
-| `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric". | string | Optional. metric or imperial. |
-
-+ Request (application/json)
-
-    + Headers
-    
-            Authorization: Bearer 03807cb390319329bdf6c777d4dfae9c0d3b3c35
-    
-    + Body
-    
-            {
-                "url": "http://yourplatform/bluedrone-hooks/shipment-create",
-                "unit_system": "imperial"
-            }
-
-    + Schema
-    
-            
-            {
-                "$schema": "http://json-schema.org/schema#",
-                "definitions": {
-                    "event": {
-                        "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
-                    },
-                    "unit_system": {
-                        "enum": ["imperial", "metric"]
-                    }
-                },
-                "title": "Hook",
-                "type": "object",
-                "properties": {
-                    "event": {
-                        "$ref": "#/definitions/event"
-                    },
-                    "url": {
-                        "type": "string",
-                        "format": "uri"
-                    },
-                    "unit_system": {
-                        "$ref": "#/definitions/unit_system"
-                    }
-                },
-                "additionalProperties": false
-            }
-            
-+ Response 200
-
-    [Hook][]
-
-### Remove a Hook [DELETE]
+### Delete an Order [DELETE]
 
 + Request
 

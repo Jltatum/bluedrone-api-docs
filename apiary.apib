@@ -1656,6 +1656,7 @@ _Hook_ objects have the following properties:
 | `id` | The Bluedrone internal ID associated to this Hook. | integer |
 | `sales_channel_id` | The Bluedrone Sales Channel ID which this Hook is registered for. | integer |
 | `event` | The event name you are subscribing for. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" | string |
+|  api_version  | The version of the API object that is posted used when calling the hook. Can be one of: "0.1", "0.2" | string |
 | `url` | The URL to be called when the event occurs. | string |
 | `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. You can use it to verify that these requests are indeed coming from Bluedrone and not from a third party. | string |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric"  | string |
@@ -1714,6 +1715,7 @@ _Hook_ objects have the following properties:
                             "id": 67,
                             "sales_channel_id": 23,
                             "event": "shipment.create",
+                            "api_version": "0.2",
                             "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                             "secret": "199eee3e44c074f7b308e852a02ce92f",
                             "unit_system": "imperial",
@@ -1732,6 +1734,7 @@ _Hook_ objects have the following properties:
                             "id": 68,
                             "sales_channel_id": 23,
                             "event": "shipment.ship",
+                            "api_version": "0.2",
                             "url": "http://yourplatform/bluedrone-hooks/shipment-ship",
                             "secret": "f0bb59bab8041b6257398eebd0f99695",
                             "unit_system": "metric",
@@ -1754,6 +1757,7 @@ The properties and the contraints are described below.
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
 | `event` | The event name you are subscribing for. | string | Required. Can be one of: "order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel" |
+| `api_version` | The version of the API object that is posted when calling the hook. | string | Required. Can be one of: "0.1", "0.2". |
 | `url` | The URL to be called when the event occurs. | string | Required. 255 chars or less. |
 | `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. | string | Required. 255 chars or less. |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
@@ -1783,6 +1787,9 @@ The properties and the contraints are described below.
                     "event": {
                         "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
                     },
+                    "api_version": {
+                        "enum": ["0.1", "0.2"]
+                    }
                     "unit_system": {
                         "enum": ["imperial", "metric"]
                     }
@@ -1793,6 +1800,9 @@ The properties and the contraints are described below.
                     "event": {
                         "$ref": "#/definitions/event"
                     },
+                    "api_version": {
+                        "$ref": "#/definitions/api_version"
+                    }
                     "url": {
                         "type": "string",
                         "format": "uri"
@@ -1820,6 +1830,7 @@ The properties and the contraints are described below.
                 "id": 67,
                 "sales_channel_id": 23,
                 "event": "shipment.create",
+                "api_version": "0.2",
                 "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                 "secret": "199eee3e44c074f7b308e852a02ce92f",
                 "unit_system": "metric",
@@ -1857,6 +1868,7 @@ The properties and the contraints are described below.
                 "id": 67,
                 "sales_channel_id": 23,
                 "event": "shipment.create",
+                "api_version": "0.2",
                 "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                 "secret": "199eee3e44c074f7b308e852a02ce92f",
                 "unit_system": "imperial",
@@ -1910,6 +1922,9 @@ The properties and the contraints are described below.
                     "event": {
                         "enum": ["order.activate", "order.onhold", "order.cancel", "shipment.create", "shipment.ship", "shipment.cancel"]
                     },
+                    "api_version": {
+                        "enum": ["0.1", "0.2"]
+                    }
                     "unit_system": {
                         "enum": ["imperial", "metric"]
                     }
@@ -1920,6 +1935,9 @@ The properties and the contraints are described below.
                     "event": {
                         "$ref": "#/definitions/event"
                     },
+                    "api_version": {
+                        "$ref": "#/definitions/api_version"
+                    }
                     "url": {
                         "type": "string",
                         "format": "uri"

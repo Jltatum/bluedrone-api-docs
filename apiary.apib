@@ -4,7 +4,8 @@ HOST: https://api.bluedrone.com
 
 # Bluedrone API
 
-This Hypermedia API is currently a **work in progress**
+This Hypermedia API is currently at **version 0.2**. 
+If you are looking for the deprecated version 0.1 docs please refer to http://docs.bluedrone01.apiary.io/
 
 ## Validation
 
@@ -1300,8 +1301,6 @@ In both cases, the _Shipment_ objects have the following properties:
 | Property | Description | Type |
 | --- | --- | --- |
 | `id` | The Bluedrone internal ID associated to this Shipment. | integer |
-| `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
-| `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
 | `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `ship_to_name` | The shipping name. | sting |
 | `ship_to_country` | The shipping country. | string |
@@ -1329,12 +1328,18 @@ In both cases, the _Shipment_ objects have the following properties:
 | `_embedded` | An object with a single property named `shipment_lines` | object |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`shipment_lines` | An array of _ShipmentLine_ objects | array |
 
+Starting with version 0.2 of the API Bluedrone supports multiple _Orders_ per _Shipment_.
+This means that the external_order_id and the sales_channel_id fields have been moved from the _Shipment_
+to the _ShipmentLine_ (since each _ShipmentLine_ can potentially be created from a different _Order_).
+
 _ShipmentLine_ objects represent the actual contents of the package. 
 This means that for compound _Products_ only their components will appear as _ShipmentLines_
 
 | Property | Description | Type |
 | --- | --- | --- |
 | `id` | The Bluedrone internal ID associated to this ShipmentLine. | integer |
+| `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
+| `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
 | `product_id` | The Bluedrone internal ID associated to the Product that is contained in this ShipmentLine. | integer |
 | `sku` | The SKU of the Product. | string |
 | `lot_id` | The Bluedrone internal ID associated to the Warehouse Lot that this Product is part of. | string |
@@ -1424,8 +1429,6 @@ the actual array of _Shipment_ objects whose properties have been described at t
                                 }
                             },
                             "id": 901,
-                            "external_order_id": "789",
-                            "sales_channel_id": 23,
                             "ship_to_is_company": false,
                             "ship_to_name": "John Green",
                             "ship_to_country": "US",
@@ -1458,7 +1461,9 @@ the actual array of _Shipment_ objects whose properties have been described at t
                                                 "href": "/products/2345-09-F-RED"
                                             }
                                         },
-                                        "id": 7898
+                                        "id": 7898,
+                                        "external_order_id": "789",
+                                        "sales_channel_id": 23,
                                         "product_id": 25,
                                         "sku": "2345-09-F-RED",
                                         "lot_id": "233",
@@ -1480,6 +1485,8 @@ the actual array of _Shipment_ objects whose properties have been described at t
                                             }
                                         },
                                         "id": 7899,
+                                        "external_order_id": "789",
+                                        "sales_channel_id": 23,
                                         "product_id": 23,
                                         "sku": "12345-09-M-XL-WHT",
                                         "lot_id": "234",
@@ -1540,8 +1547,6 @@ A single Order with all it's details. A Product is always referred to by using t
                     }
                 },
                 "id": 901,
-                "external_order_id": "789",
-                "sales_channel_id": 23,
                 "ship_to_is_company": false,
                 "ship_to_name": "John Green",
                 "ship_to_country": "US",
@@ -1574,7 +1579,9 @@ A single Order with all it's details. A Product is always referred to by using t
                                     "href": "/products/2345-09-F-RED"
                                 }
                             },
-                            "id": 7898
+                            "id": 7898,
+                            "external_order_id": "789",
+                            "sales_channel_id": 23,
                             "product_id": 25,
                             "sku": "2345-09-F-RED",
                             "lot_id": "233",
@@ -1596,6 +1603,8 @@ A single Order with all it's details. A Product is always referred to by using t
                                 }
                             },
                             "id": 7899,
+                            "external_order_id": "789",
+                            "sales_channel_id": 23,
                             "product_id": 23,
                             "sku": "12345-09-M-XL-WHT",
                             "lot_id": "234",

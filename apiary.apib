@@ -246,6 +246,7 @@ In both cases, the _Product_ objects have the following properties:
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
 | `price` | The estimated Product price in the currency of choice. | decimal |
 | `currency_code` | The [ISO-4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for the price. | string |
+| `is_unfulfillable` | Tells if a Product is unfulfillable by Bluedrone. | boolean | 
 | `is_fragile` | Tells if a Product is fragile. | boolean | 
 | `is_dangerous` | Tells if a Product is dangerous. | boolean |
 | `is_perishable` | Tells if a Product is perishable. | boolean |
@@ -327,6 +328,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "height": 5,
                             "price": 7.5,
                             "currency_code": "USD",
+                            "is_unfulfillable": false,
                             "is_fragile": false,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -349,6 +351,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "height": 1,
                             "price": 3.5,
                             "currency_code": "USD",
+                            "is_unfulfillable": false,
                             "is_fragile": true,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -395,6 +398,7 @@ A single Product with all it's details. A Product is always referred to by using
                 "height": 1,
                 "price": 3.5,
                 "currency_code": "USD",
+                "is_unfulfillable": false,
                 "is_fragile": true,
                 "is_dangerous": false,
                 "is_perishable": false,
@@ -419,6 +423,7 @@ The properties and the contraints are described below.
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Optional. |
 | `price` | The estimated Product price in the currency of choice. | decimal | Optional. |
 | `currency_code` | The 3 letter currency code for the price. | string | Optional. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
+| `is_unfulfillable` | It can be false (not unfulfillable) or true (unfulfillable by Bluedrone) | boolean | Optional. true or false. |
 | `is_fragile` | It can be false (not fragile) or true (fragile) | boolean | Optional. true or false. |
 | `is_dangerous` | It can be false (not dangerous) or true (dangerous) | boolean | Optional. true or false. |
 | `is_perishable` | It can be false (not perishable) or true (perishable) | boolean | Optional. true or false. |
@@ -445,6 +450,7 @@ The properties and the contraints are described below.
                 "height": 1,
                 "price": 3.5,
                 "currency_code": "USD",
+                "is_unfulfillable": false,
                 "is_fragile": true,
                 "is_dangerous": false,
                 "is_perishable": false
@@ -495,6 +501,9 @@ The properties and the contraints are described below.
                     },
                     "currency_code": {
                         "$ref": "#/definitions/currency_code"
+                    },
+                    "is_unfulfillable": {
+                        "type": "boolean"
                     },
                     "is_fragile": {
                         "type": "boolean"
@@ -605,6 +614,7 @@ the only difference being a few more properties:
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
 | `price` | The estimated Product price in the currency of choice. | decimal |
+| `is_unfulfillable` | Tells if the associated Product is unfulfillable by Bluedrone. | boolean | 
 | `is_fragile` | Tells if the associated Product is fragile. | boolean | 
 | `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
 | `is_perishable` | Tells if the associated Product is perishable. | boolean |
@@ -732,6 +742,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 1,
                                         "height": 1,
                                         "price": 5,
+                                        "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -753,6 +764,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 10,
                                         "height": 5,
                                         "price": 9,
+                                        "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -825,6 +837,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 1,
                                         "height": 1,
                                         "price": 3.5,
+                                        "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -846,6 +859,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "width": 10,
                                         "height": 5,
                                         "price": 7.5,
+                                        "is_unfulfillable": false,
                                         "is_fragile": false,
                                         "is_dangerous": false,
                                         "is_perishable": false,
@@ -942,6 +956,7 @@ A single Order with all it's details. A Product is always referred to by using t
                             "width": 1,
                             "height": 1,
                             "price": 5,
+                            "is_unfulfillable": false,
                             "is_fragile": true,
                             "is_dangerous": false,
                             "is_perishable": false,
@@ -963,6 +978,7 @@ A single Order with all it's details. A Product is always referred to by using t
                             "width": 10,
                             "height": 5,
                             "price": 9,
+                            "is_unfulfillable": false,
                             "is_fragile": false,
                             "is_dangerous": false,
                             "is_perishable": false,

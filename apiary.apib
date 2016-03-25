@@ -567,7 +567,7 @@ In both cases, the _Order_ objects have the following properties:
 | `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `bill_to_name` | The billing name. | sting |
 | `bill_to_country` | The billing country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string 
-| `bill_to_state` | The billing state. For US states, it will be the full state name. | string |
+| `bill_to_state` | The billing state. For US states, it will be the two letter code ant not the full name. | string |
 | `bill_to_city` | The billing city. | string |
 | `bill_to_zip` | The billing zip/postal code. | string |
 | `bill_to_address1` | The billing address. | string |
@@ -578,7 +578,7 @@ In both cases, the _Order_ objects have the following properties:
 | `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `ship_to_name` | The shipping name. | sting |
 | `ship_to_country` | The shipping country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string |
-| `ship_to_state` | The shipping state. For US states, it will be the full state name. | string |
+| `ship_to_state` | The shipping state. For US states, it will be the two letter code ant not the full name. | string |
 | `ship_to_city` | The shipping city. | string | 
 | `ship_to_zip` | The shipping zip/postal code. | string |
 | `ship_to_address1` | The shipping address. | string |
@@ -999,7 +999,7 @@ The Order object sent to the server has the properties described in the followin
 | `bill_to_is_company` | Tells if the billing target is a company or an individual. | boolean | Optional. |
 | `bill_to_name` | The billing name. | sting | Optional. 100 chars or less. |
 | `bill_to_country` | The billing country. | string | Optional. Exactly 2 chars, in [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). |
-| `bill_to_state` | The billing state. For US states, you can use the 2 letter state code or the full state name. | string | Optional. 100 chars or less. |
+| `bill_to_state` | The billing state. For US states, it will be the two letter code ant not the full name. | string | Optional. 100 chars or less. |
 | `bill_to_city` | The billing city. | string | Optional. 100 chars or less. |
 | `bill_to_zip` | The billing zip/postal code. | string | Optional. 16 chars or less. |
 | `bill_to_address1` | The billing address. | string | Optional. 100 chars or less. |
@@ -1010,7 +1010,7 @@ The Order object sent to the server has the properties described in the followin
 | `ship_to_is_company` | Tells if the shipping target is a company or an individual. | boolean | Required. |
 | `ship_to_name` | The shipping name. | sting | Required. 100 chars or less. |
 | `ship_to_country` | The shipping country. | string | Required. Exactly 2 chars, in [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). |
-| `ship_to_state` | The shipping state. For US states, you can use the 2 letter state code or the full state name. | string | Required. 100 chars or less. |
+| `ship_to_state` | The shipping state. For US states, it will be the two letter code ant not the full name. | string | Required. 100 chars or less. |
 | `ship_to_city` | The shipping city. | string | Required. 100 chars or less. |
 | `ship_to_zip` | The shipping zip/postal code. | string | Required. 16 chars or less. |
 | `ship_to_address1` | The shipping address. | string | Required. 100 chars or less. |
@@ -1320,7 +1320,7 @@ In both cases, the _Shipment_ objects have the following properties:
 | `ship_to_is_company` | Tells if the billing target is a company or an individual. | boolean |
 | `ship_to_name` | The shipping name. | sting |
 | `ship_to_country` | The shipping country. | string |
-| `ship_to_state` | The shipping state. For US states, it will be the full state name. | string |
+| `ship_to_state` | The shipping state. For US states, it will be the two letter code ant not the full name. | string |
 | `ship_to_city` | The shipping city. | string | 
 | `ship_to_zip` | The shipping zip/postal code. | string |
 | `ship_to_address1` | The shipping address. | string |

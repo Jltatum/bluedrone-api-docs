@@ -1028,6 +1028,7 @@ The Order object sent to the server has the properties described in the followin
 | `currency_code` | The 3 letter currency code that prices are expressed in. | string | Optional. Exactly 3 letters, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
 | `order_lines` | An array of OrderLine objects | array | Required. At least one array element. |
+| `auto_create_products` | Tells if missing products should be automatically created. | boolean | Optional. (default is true) |
 
 The OrderLine objects which are part of the `order_lines` collection have the properties described in the following table.
 

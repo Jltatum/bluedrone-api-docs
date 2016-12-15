@@ -4,8 +4,8 @@ HOST: https://api.bluedrone.com
 
 # Bluedrone API
 
-This Hypermedia API is currently at **version 0.2**. 
-If you are looking for the deprecated version 0.1 docs please refer to http://docs.bluedrone01.apiary.io/
+This Hypermedia API is currently at **version 0.3**. 
+If you are looking for the deprecated version 0.2 docs please refer to http://docs.bluedrone02.apiary.io/
 
 ## Validation
 
@@ -252,7 +252,6 @@ In both cases, the _Product_ objects have the following properties:
 | `is_fragile` | Tells if a Product is fragile. | boolean | 
 | `is_dangerous` | Tells if a Product is dangerous. | boolean |
 | `is_perishable` | Tells if a Product is perishable. | boolean |
-| `is_compound` | Tells if a Product is composed of other Products. | boolean |
 | `fulfillment_priority` | Can have one of the values: "normal", "express", "same_day" | string |
 
 
@@ -337,7 +336,6 @@ the actual array of _Product_ objects whose properties have been described at th
                             "is_fragile": false,
                             "is_dangerous": false,
                             "is_perishable": false,
-                            "is_compound": false,
                             "fulfillment_priority": "normal"
                         } ,
                         {
@@ -363,7 +361,6 @@ the actual array of _Product_ objects whose properties have been described at th
                             "is_fragile": true,
                             "is_dangerous": false,
                             "is_perishable": false,
-                            "is_compound": false,
                             "fulfillment_priority": "normal"
                         }
                     ]
@@ -413,7 +410,6 @@ A single Product with all it's details. A Product is always referred to by using
                 "is_fragile": true,
                 "is_dangerous": false,
                 "is_perishable": false,
-                "is_compound": false,
                 "fulfillment_priority": "normal"
             }
 
@@ -651,7 +647,6 @@ the only difference being a few more properties:
 | `is_fragile` | Tells if the associated Product is fragile. | boolean | 
 | `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
 | `is_perishable` | Tells if the associated Product is perishable. | boolean |
-| `is_compound` | Tells if the associated Product is composed of other Products. | boolean |
 
 ## Orders Collection [/channels/{sales_channel_id}/orders{?unit_system,offset,limit}]
 
@@ -781,8 +776,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
-                                        "is_perishable": false,
-                                        "is_compound": false
+                                        "is_perishable": false
                                     },
                                     {
                                         "_links": {
@@ -805,8 +799,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
-                                        "is_perishable": false,
-                                        "is_compound": false
+                                        "is_perishable": false
                                     }
                                 ]
                             }
@@ -881,8 +874,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "is_unfulfillable": false,
                                         "is_fragile": true,
                                         "is_dangerous": false,
-                                        "is_perishable": false,
-                                        "is_compound": false
+                                        "is_perishable": false
                                     },
                                     {
                                         "_links": {
@@ -905,8 +897,7 @@ the actual array of _Order_ objects whose properties have been described at the 
                                         "is_unfulfillable": false,
                                         "is_fragile": false,
                                         "is_dangerous": false,
-                                        "is_perishable": false,
-                                        "is_compound": false
+                                        "is_perishable": false
                                     }
                                 ]
                             }
@@ -1005,8 +996,7 @@ A single Order with all it's details. A Product is always referred to by using t
                             "is_unfulfillable": false,
                             "is_fragile": true,
                             "is_dangerous": false,
-                            "is_perishable": false,
-                            "is_compound": false
+                            "is_perishable": false
                         },
                         {
                             "_links": {
@@ -1029,8 +1019,7 @@ A single Order with all it's details. A Product is always referred to by using t
                             "is_unfulfillable": false,
                             "is_fragile": false,
                             "is_dangerous": false,
-                            "is_perishable": false,
-                            "is_compound": false
+                            "is_perishable": false
                         }
                     ]
                 }
@@ -1428,23 +1417,9 @@ This means that for compound _Products_ only their components will appear as _Sh
 | `external_order_id` | Unique identifier for your order from your e-commerce platform. | string |
 | `external_order_name` | The name of your order from your platform. | string |
 | `sales_channel_id` | The id of the Bluedrone Sales Channel. | integer |
-| `product_id` | The Bluedrone internal ID associated to the Product that is contained in this ShipmentLine. | integer |
 | `sku` | The SKU of the Product. | string |
-| `lot_id` | The Bluedrone internal ID associated to the Warehouse Lot that this Product is part of. | string |
-| `lot_number` | The Warehouse Lot number. | string |
+| `lots` | The Warehouse Lot numbers. Array of strings. | array |
 | `quantity` | The number of units for the Product. | integer |
-| `name` | The user friendly name of the Product. | string |
-| `weight` | The packed weight in ounces or grams, depening on the unit system. | decimal |
-| `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
-| `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
-| `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
-| `price` | The estimated Product price in the currency of choice. | decimal |
-| `currency_code` | The [ISO-4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for the price. | string |
-| `origin_country` | The origin country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string |
-| `hst_code` | The [harmonized system for tariffs](https://hts.usitc.gov/) code. Between six and ten digits. | string |
-| `is_fragile` | Tells if the associated Product is fragile. | boolean | 
-| `is_dangerous` | Tells if the associated Product is dangerous. | boolean |
-| `is_perishable` | Tells if the associated Product is perishable. | boolean |
 
 ## Shipments Collection [/channels/{sales_channel_id}/orders/{external_order_id}/shipments{?unit_system,offset,limit}]
 
@@ -1557,23 +1532,9 @@ the actual array of _Shipment_ objects whose properties have been described at t
                                         "external_order_id": "789",
                                         "external_order_name": "789",
                                         "sales_channel_id": 23,
-                                        "product_id": 25,
                                         "sku": "2345-09-F-RED",
-                                        "lot_id": "233",
-                                        "lot_number": "FDA236354763475",
-                                        "quantity": 1,
-                                        "name": "Gheisa Hair Pin Red",
-                                        "weight": 10,
-                                        "length": 4,
-                                        "width": 1,
-                                        "height": 1,
-                                        "price": 3.5,
-                                        "currency_code": "USD",
-                                        "origin_country" : "US",
-                                        "hst_code": "123456",
-                                        "is_fragile": true,
-                                        "is_dangerous": false,
-                                        "is_perishable": false
+                                        "lots": ["FDA236354763475"],
+                                        "quantity": 1
                                     },
                                     {
                                         "_links": {
@@ -1585,23 +1546,9 @@ the actual array of _Shipment_ objects whose properties have been described at t
                                         "external_order_id": "790",
                                         "external_order_name": "790",
                                         "sales_channel_id": 23,
-                                        "product_id": 23,
                                         "sku": "12345-09-M-XL-WHT",
-                                        "lot_id": "234",
-                                        "lot_number": "25654642624",
-                                        "quantity": 2,
-                                        "name": "Japanese Kimono Men's Large White",
-                                        "weight": 100,
-                                        "length": 10,
-                                        "width": 10,
-                                        "height": 5,
-                                        "price": 7.5,
-                                        "currency_code": "USD",
-                                        "origin_country" : "US",
-                                        "hst_code": "",
-                                        "is_fragile": true,
-                                        "is_dangerous": false,
-                                        "is_perishable": false
+                                        "lots": ["25654642624"],
+                                        "quantity": 2
                                     }
                                 ]
                             }
@@ -1685,23 +1632,8 @@ A single Order with all it's details. A Product is always referred to by using t
                             "external_order_id": "789",
                             "external_order_name": "789",
                             "sales_channel_id": 23,
-                            "product_id": 25,
                             "sku": "2345-09-F-RED",
-                            "lot_id": "233",
-                            "lot_number": "FDA236354763475",
-                            "quantity": 1,
-                            "name": "Gheisa Hair Pin Red",
-                            "weight": 10,
-                            "length": 4,
-                            "width": 1,
-                            "height": 1,
-                            "price": 3.5,
-                            "currency_code": "USD",
-                            "origin_country" : "US",
-                            "hst_code": "123456",
-                            "is_fragile": true,
-                            "is_dangerous": false,
-                            "is_perishable": false
+                            "lots": ["FDA236354763475"]
                         },
                         {
                             "_links": {
@@ -1713,23 +1645,8 @@ A single Order with all it's details. A Product is always referred to by using t
                             "external_order_id": "790",
                             "external_order_name": "790",
                             "sales_channel_id": 23,
-                            "product_id": 23,
                             "sku": "12345-09-M-XL-WHT",
-                            "lot_id": "234",
-                            "lot_number": "25654642624",
-                            "quantity": 2,
-                            "name": "Japanese Kimono Men's Large White",
-                            "weight": 100,
-                            "length": 10,
-                            "width": 10,
-                            "height": 5,
-                            "price": 7.5,
-                            "currency_code": "USD",
-                            "origin_country" : "US",
-                            "hst_code": "",
-                            "is_fragile": true,
-                            "is_dangerous": false,
-                            "is_perishable": false
+                            "lots": ["25654642624"]
                         }
                     ]
                 }
@@ -1869,7 +1786,7 @@ The properties and the contraints are described below.
 | Property | Description | Type | Constraints |
 | --- | --- | --- | --- |
 | `event` | The event name you are subscribing for. | string | Required. Can be one of: "order.activate", "order.onhold", "order.cancel", "order.block", "shipment.create", "shipment.ship", "shipment.cancel" |
-| `api_version` | The version of the API object that is posted when calling the hook. | string | Optional. Can be one of: "0.1" (default), "0.2". |
+| `api_version` | The version of the API object that is posted when calling the hook. | string | Optional. Can be one of: "0.3" (default), "0.2", "0.1". |
 | `url` | The URL to be called when the event occurs. | string | Required. 255 chars or less. |
 | `secret` | The secret key used to sign requests made by Bluedrone to your Hook URL. | string | Required. 255 chars or less. |
 | `unit_system` | The unit system for weights and measurements. It can be "imperial" or "metric" (default) | string | Optional. metric or imperial. |
@@ -1887,7 +1804,7 @@ The properties and the contraints are described below.
     
             {
                 "event": "shipment.create",
-                "api_version": "0.2",
+                "api_version": "0.3",
                 "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                 "secret": "199eee3e44c074f7b308e852a02ce92f"
             }
@@ -1902,7 +1819,7 @@ The properties and the contraints are described below.
                         "enum": ["order.activate", "order.onhold", "order.cancel", "order.block", "shipment.create", "shipment.ship", "shipment.cancel"]
                     },
                     "api_version": {
-                        "enum": ["0.1", "0.2"]
+                        "enum": ["0.1", "0.2", "0.3"]
                     }
                     "unit_system": {
                         "enum": ["imperial", "metric"]
@@ -1945,7 +1862,7 @@ The properties and the contraints are described below.
                 "id": 67,
                 "sales_channel_id": 23,
                 "event": "shipment.create",
-                "api_version": "0.2",
+                "api_version": "0.3",
                 "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                 "secret": "199eee3e44c074f7b308e852a02ce92f",
                 "unit_system": "metric",
@@ -1983,7 +1900,7 @@ The properties and the contraints are described below.
                 "id": 67,
                 "sales_channel_id": 23,
                 "event": "shipment.create",
-                "api_version": "0.2",
+                "api_version": "0.3",
                 "url": "http://yourplatform/bluedrone-hooks/shipment-create",
                 "secret": "199eee3e44c074f7b308e852a02ce92f",
                 "unit_system": "imperial",
@@ -2038,7 +1955,7 @@ The properties and the contraints are described below.
                         "enum": ["order.activate", "order.onhold", "order.cancel", "order.block", "shipment.create", "shipment.ship", "shipment.cancel"]
                     },
                     "api_version": {
-                        "enum": ["0.1", "0.2"]
+                        "enum": ["0.1", "0.2", "0.3"]
                     }
                     "unit_system": {
                         "enum": ["imperial", "metric"]

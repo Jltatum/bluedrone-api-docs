@@ -244,6 +244,7 @@ In both cases, the _Product_ objects have the following properties:
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal |
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | 
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal |
+| `description` | Description of the Product. Supports HTML formatting. | string |
 | `price` | The estimated Product price in the currency of choice. | decimal |
 | `currency_code` | The [ISO-4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for the price. | string |
 | `origin_country` | The origin country code. [ISO 3166-1 format](http://en.wikipedia.org/wiki/ISO_3166-1). | string |
@@ -328,6 +329,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "length": 10,
                             "width": 10,
                             "height": 5,
+                            "description": "Japanese Kimono Men's. Size: Large. Color: White",
                             "price": 7.5,
                             "currency_code": "USD",
                             "origin_country" : "US",
@@ -353,6 +355,7 @@ the actual array of _Product_ objects whose properties have been described at th
                             "length": 4,
                             "width": 1,
                             "height": 1,
+                            "description": "Gheisa Hair Pin. Color: Red",
                             "price": 3.5,
                             "currency_code": "USD",
                             "origin_country" : "US",
@@ -402,6 +405,7 @@ A single Product with all it's details. A Product is always referred to by using
                 "length": 4,
                 "width": 1,
                 "height": 1,
+                "description": "Gheisa Hair Pin. Color: Red",
                 "price": 3.5,
                 "currency_code": "USD",
                 "origin_country" : "US",
@@ -429,6 +433,7 @@ The properties and the contraints are described below.
 | `length` | The packed length in inches or centimeters, depening on the unit system. | decimal | Optional. |
 | `width` | The packed width in inches or centimeters, depening on the unit system. | decimal | Optional. |
 | `height` | The packed height in inches or centimeters, depening on the unit system. | decimal | Optional. |
+| `description` | Description of the Product. Supports HTML formatting. | string | Optional. |
 | `price` | The estimated Product price in the currency of choice. | decimal | Optional. |
 | `currency_code` | The 3 letter currency code for the price. | string | Optional. [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217). | 
 | `is_unfulfillable` | It can be false (not unfulfillable) or true (unfulfillable by Bluedrone) | boolean | Optional. true or false. |
@@ -456,6 +461,7 @@ The properties and the contraints are described below.
                 "length": 4,
                 "width": 1,
                 "height": 1,
+                "description": "Gheisa Hair Pin. Color: Red",
                 "price": 3.5,
                 "currency_code": "USD",
                 "origin_country" : "US",
@@ -509,6 +515,9 @@ The properties and the contraints are described below.
                     },
                     "height": {
                         "type": "number"
+                    },
+                    "description": {
+                        "type": "string"
                     },
                     "price": {
                         "type": "number"
